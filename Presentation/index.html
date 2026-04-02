@@ -457,11 +457,23 @@
   /* Slide 8 – Operations Matrix */
   #slide-8 { background: linear-gradient(135deg, #0a0a0a 0%, #1a0a00 100%); }
 
-  /* Slide 9 – Deployment */
+  /* Slide 9 – Results Part 1 */
   #slide-9 { background: #0a0a0a; }
 
-  /* Slide 10 – Summary */
-  #slide-10 {
+  /* Slide 10 – Results Part 2 */
+  #slide-10 { background: linear-gradient(135deg, #0a0a0a 0%, #0d1a0d 100%); }
+
+  /* Slide 11 – Business Insights */
+  #slide-11 { background: #0a0a0a; }
+
+  /* Slide 12 – Operations Matrix */
+  #slide-12 { background: linear-gradient(135deg, #0a0a0a 0%, #1a0a00 100%); }
+
+  /* Slide 13 – Deployment */
+  #slide-13 { background: #0a0a0a; }
+
+  /* Slide 14 – Summary */
+  #slide-14 {
     background: radial-gradient(ellipse at 50% 50%, #1a0a0a 0%, #0a0a0a 70%);
     flex-direction: column;
     text-align: center;
@@ -694,7 +706,7 @@
 <nav class="navbar" id="navbar">
   <div class="nav-logo"><img src="Image/netflix.png" alt="Netflix"></div>
   <div class="nav-title">MM5412 · Hachimi Group · Business Intelligence And Decisions</div>
-  <div class="nav-counter" id="slideCounter">01 / 13</div>
+  <div class="nav-counter" id="slideCounter">01 / 14</div>
 </nav>
 
 <!-- Slide Dots -->
@@ -1321,14 +1333,14 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 9: RESULTS ─── -->
+  <!-- ─── SLIDE 9: RESULTS (PART 1) ─── -->
   <div class="slide" id="slide-9">
     <div class="slide-inner">
       <div class="slide-label">模型评估结果</div>
       <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
         <div class="fade-in">
           <div class="divider-red"></div>
-          <h2 class="display-2">最终模型<span class="text-red">性能评估</span></h2>
+          <h2 class="display-2">最终模型<br><span class="text-red">性能评估</span></h2>
         </div>
         <div class="fade-in">
           <div class="card" style="padding:0;overflow:hidden;">
@@ -1401,18 +1413,103 @@
           </div>
         </div>
         <div class="fade-in">
-          <div class="card" style="padding:12px 16px;border-left:3px solid var(--accent-gold);background:rgba(245,166,35,0.05);">
-            <div style="font-size:12px;color:var(--text-secondary);">
-              <strong style="color:var(--accent-gold);">💡 关键解读：</strong>
-              <code style="background:rgba(255,255,255,0.1);padding:1px 4px;border-radius:3px;">Recall@1 (流失)</code> = 针对 <strong>Churned=Yes</strong> 的召回率，即"实际流失用户中被正确识别的比例"。
-              XGBoost 虽然 Accuracy 最高(0.8386)，但流失召回率仅 53.3%，意味着 <strong style="color:var(--netflix-red);">46.7% 的流失用户被漏检</strong>，
-              从业务角度损失巨大。LightGBM 在流失召回率(88.8%)与 AUC(0.908)之间取得最佳平衡。
+          <div class="card" style="padding:16px 20px;border-left:3px solid var(--accent-gold);background:rgba(245,166,35,0.05);">
+            <div style="font-size:13px;font-weight:700;color:var(--accent-gold);margin-bottom:12px;">💡 关键解读</div>
+            <div style="font-size:13px;color:var(--text-secondary);line-height:1.9;">
+              <strong style="color:var(--text-primary);">XGBoost</strong> 虽然 Accuracy 最高(0.8386)，但流失召回率仅 <span style="color:var(--netflix-red);font-weight:700;">53.3%</span>，意味着 <span style="color:var(--netflix-red);font-weight:700;">46.7% 的流失用户被漏检</span>，从业务角度损失巨大。
+              <br>
+              <strong style="color:var(--text-primary);">LightGBM</strong> 在流失召回率(<span style="color:var(--accent-green);font-weight:700;">88.8%</span>)与 AUC(0.908)之间取得最佳平衡，是生产部署的首选模型。
+              <br>
+              <strong style="color:var(--text-primary);">Decision Tree</strong> 的流失召回率高达 <span style="color:var(--accent-gold);font-weight:700;">89.6%</span>，但 AUC 仅为 0.885，说明存在较多误报。
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 10: RESULTS (PART 2) ─── -->
+  <div class="slide" id="slide-10">
+    <div class="slide-inner">
+      <div class="slide-label">模型评估结果</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">最终模型<br><span class="text-red">性能评估</span></h2>
+        </div>
+        <div class="fade-in">
+          <div class="card" style="padding:0;overflow:hidden;">
+            <table class="netflix-table">
+              <thead>
+                <tr>
+                  <th>模型</th>
+                  <th>Accuracy</th>
+                  <th>Precision</th>
+                  <th>Recall (总体)</th>
+                  <th>F1 Score</th>
+                  <th>AUC</th>
+                  <th>Recall@1 (流失)</th>
+                  <th>训练时间</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span style="font-weight:600;">Logistic Regression</span></td>
+                  <td>0.8220</td>
+                  <td>0.8755</td>
+                  <td>0.8220</td>
+                  <td>0.8357</td>
+                  <td><span class="text-red" style="font-weight:700;">0.9110</span></td>
+                  <td><span class="text-green" style="font-weight:700;">86.8%</span></td>
+                  <td>0.047s</td>
+                </tr>
+                <tr>
+                  <td><span style="font-weight:600;">Decision Tree</span></td>
+                  <td>0.7776</td>
+                  <td>0.8672</td>
+                  <td>0.7776</td>
+                  <td>0.7980</td>
+                  <td>0.8849</td>
+                  <td style="color:var(--accent-gold);">89.6%</td>
+                  <td>0.229s</td>
+                </tr>
+                <tr>
+                  <td><span style="font-weight:600;">XGBoost (GPU)</span></td>
+                  <td style="color:var(--text-primary);">0.8386</td>
+                  <td>0.8316</td>
+                  <td>0.8386</td>
+                  <td style="color:var(--text-primary);font-weight:700;">0.8344</td>
+                  <td>0.9001</td>
+                  <td style="color:var(--netflix-red);">53.3% ⚠️</td>
+                  <td>1.053s</td>
+                </tr>
+                <tr class="highlight-row" style="background:rgba(70,211,105,0.08);">
+                  <td><span style="font-weight:700;color:var(--accent-green);">🏆 LightGBM (GPU)</span></td>
+                  <td>0.8112</td>
+                  <td>0.8759</td>
+                  <td>0.8112</td>
+                  <td>0.8269</td>
+                  <td>0.9077</td>
+                  <td><span class="text-green" style="font-weight:700;">88.8%</span></td>
+                  <td>0.834s</td>
+                </tr>
+                <tr>
+                  <td><span style="font-weight:600;">Random Forest</span></td>
+                  <td>0.8234</td>
+                  <td>0.8653</td>
+                  <td>0.8234</td>
+                  <td>0.8354</td>
+                  <td>0.9073</td>
+                  <td>81.5%</td>
+                  <td>0.918s</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
         <div class="grid-2 fade-in" style="gap:20px;">
-          <div class="card">
-            <div style="font-size:13px;font-weight:700;color:var(--netflix-red);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:14px;">AUC 对比（调优前 vs 后）</div>
+          <div class="card" style="display:flex;flex-direction:column;align-items:stretch;">
+            <div style="font-size:13px;font-weight:700;color:var(--netflix-red);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:14px;">📊 AUC 对比（调优前 vs 后）</div>
             <div class="bar-chart">
               <div class="bar-row">
                 <div class="bar-label" style="font-size:11px;">LR</div>
@@ -1449,8 +1546,8 @@
           </div>
           <div style="display:flex;flex-direction:column;gap:12px;">
             <div class="card-featured">
-              <div style="font-size:13px;font-weight:700;color:var(--netflix-red);margin-bottom:10px;">核心结论</div>
-              <div class="body-sm" style="line-height:1.8;">
+              <div style="font-size:13px;font-weight:700;color:var(--netflix-red);margin-bottom:10px;">🏆 核心结论</div>
+              <div class="body-sm" style="line-height:1.9;">
                 ✅ 调优后集成模型 AUC 均达到 <strong class="text-red">0.90+</strong><br>
                 ✅ ROC 曲线呈现清晰弧度（vs 调优前 AUC ≈ 0.52）<br>
                 ✅ HalvingSearch 节省 <strong class="text-green">70% 训练时间</strong><br>
@@ -1467,8 +1564,8 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 10: BUSINESS INSIGHTS ─── -->
-  <div class="slide" id="slide-10">
+  <!-- ─── SLIDE 11: BUSINESS INSIGHTS ─── -->
+  <div class="slide" id="slide-11">
     <div class="slide-inner">
       <div class="slide-label">商业洞见</div>
       <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
@@ -1526,8 +1623,8 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 11: OPERATIONS MATRIX ─── -->
-  <div class="slide" id="slide-11">
+  <!-- ─── SLIDE 12: OPERATIONS MATRIX ─── -->
+  <div class="slide" id="slide-12">
     <div class="slide-inner">
       <div class="slide-label">精准运营矩阵</div>
       <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
@@ -1613,8 +1710,8 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 12: DEPLOYMENT ─── -->
-  <div class="slide" id="slide-12">
+  <!-- ─── SLIDE 13: DEPLOYMENT ─── -->
+  <div class="slide" id="slide-13">
     <div class="slide-inner">
       <div class="slide-label">生产部署</div>
       <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
@@ -1712,8 +1809,8 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 13: SUMMARY ─── -->
-  <div class="slide" id="slide-13">
+  <!-- ─── SLIDE 14: SUMMARY ─── -->
+  <div class="slide" id="slide-14">
     <div class="cover-bg"></div>
     <div class="cover-glow"></div>
     <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:40px;max-width:900px;text-align:center;">
@@ -1771,7 +1868,7 @@
 <script>
   // ─── STATE ───
   let currentSlide = 0;
-  const totalSlides = 13;
+  const totalSlides = 14;
 
   // ─── CURSOR ───
   const cursor = document.getElementById('cursor');
