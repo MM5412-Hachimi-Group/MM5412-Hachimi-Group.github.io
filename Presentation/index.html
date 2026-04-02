@@ -1270,22 +1270,22 @@
               <span class="tag tag-gold">AUC: 0.885</span>
             </div>
           </div>
-          <div class="card card-featured" style="border-top:3px solid var(--netflix-red);">
-            <div style="font-size:11px;letter-spacing:0.08em;color:var(--netflix-red);font-weight:700;text-transform:uppercase;margin-bottom:10px;">🏆 生产首选</div>
+          <div class="card card-featured" style="border-top:3px solid var(--accent-green);">
+            <div style="font-size:11px;letter-spacing:0.08em;color:var(--accent-green);font-weight:700;text-transform:uppercase;margin-bottom:10px;">🏆 生产首选</div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:8px;">LightGBM (GPU)</div>
+            <div class="body-sm" style="margin-bottom:12px;">流失召回率88.8%，概率校准好，GPU 加速，叶节点优先生长</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span class="tag tag-green">Halving Search</span>
+              <span class="tag tag-green">AUC: 0.908</span>
+            </div>
+          </div>
+          <div class="card" style="border-top:3px solid var(--netflix-red);">
+            <div style="font-size:11px;letter-spacing:0.08em;color:var(--netflix-red);font-weight:700;text-transform:uppercase;margin-bottom:10px;">高精度追求</div>
             <div style="font-size:17px;font-weight:700;margin-bottom:8px;">XGBoost (GPU)</div>
-            <div class="body-sm" style="margin-bottom:12px;">精度与速度最优平衡，GPU 加速，20次随机搜索</div>
+            <div class="body-sm" style="margin-bottom:12px;">Accuracy 最高，但流失召回率仅53.3%，需配合阈值调整</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
               <span class="tag tag-red">Halving Search</span>
               <span class="tag tag-red">AUC: 0.900</span>
-            </div>
-          </div>
-          <div class="card" style="border-top:3px solid #a78bfa;">
-            <div style="font-size:11px;letter-spacing:0.08em;color:#a78bfa;font-weight:700;text-transform:uppercase;margin-bottom:10px;">大数据首选</div>
-            <div style="font-size:17px;font-weight:700;margin-bottom:8px;">LightGBM (GPU)</div>
-            <div class="body-sm" style="margin-bottom:12px;">超大数据集下 GPU 速度最快，叶节点优先生长</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <span class="tag tag-purple">Halving Search</span>
-              <span class="tag tag-purple">AUC: 0.908</span>
             </div>
           </div>
           <div class="card" style="border-top:3px solid var(--accent-green);">
@@ -1338,9 +1338,10 @@
                   <th>模型</th>
                   <th>Accuracy</th>
                   <th>Precision</th>
-                  <th>Recall</th>
+                  <th>Recall (总体)</th>
                   <th>F1 Score</th>
                   <th>AUC</th>
+                  <th>Recall@1 (流失)</th>
                   <th>训练时间</th>
                 </tr>
               </thead>
@@ -1352,6 +1353,7 @@
                   <td>0.8220</td>
                   <td>0.8357</td>
                   <td><span class="text-red" style="font-weight:700;">0.9110</span></td>
+                  <td><span class="text-green" style="font-weight:700;">86.8%</span></td>
                   <td>0.047s</td>
                 </tr>
                 <tr>
@@ -1361,24 +1363,27 @@
                   <td>0.7776</td>
                   <td>0.7980</td>
                   <td>0.8849</td>
+                  <td style="color:var(--accent-gold);">89.6%</td>
                   <td>0.229s</td>
                 </tr>
-                <tr class="highlight-row" style="background:rgba(229,9,20,0.05);">
-                  <td><span style="font-weight:700;color:var(--netflix-red);">🏆 XGBoost (GPU)</span></td>
+                <tr>
+                  <td><span style="font-weight:600;">XGBoost (GPU)</span></td>
                   <td style="color:var(--text-primary);">0.8386</td>
                   <td>0.8316</td>
-                  <td style="color:var(--accent-green);font-weight:700;">0.8386</td>
+                  <td>0.8386</td>
                   <td style="color:var(--text-primary);font-weight:700;">0.8344</td>
                   <td>0.9001</td>
+                  <td style="color:var(--netflix-red);">53.3% ⚠️</td>
                   <td>1.053s</td>
                 </tr>
-                <tr>
-                  <td><span style="font-weight:600;">LightGBM (GPU)</span></td>
+                <tr class="highlight-row" style="background:rgba(70,211,105,0.08);">
+                  <td><span style="font-weight:700;color:var(--accent-green);">🏆 LightGBM (GPU)</span></td>
                   <td>0.8112</td>
                   <td>0.8759</td>
                   <td>0.8112</td>
                   <td>0.8269</td>
                   <td>0.9077</td>
+                  <td><span class="text-green" style="font-weight:700;">88.8%</span></td>
                   <td>0.834s</td>
                 </tr>
                 <tr>
@@ -1388,10 +1393,21 @@
                   <td>0.8234</td>
                   <td>0.8354</td>
                   <td>0.9073</td>
+                  <td>81.5%</td>
                   <td>0.918s</td>
                 </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+        <div class="fade-in">
+          <div class="card" style="padding:12px 16px;border-left:3px solid var(--accent-gold);background:rgba(245,166,35,0.05);">
+            <div style="font-size:12px;color:var(--text-secondary);">
+              <strong style="color:var(--accent-gold);">💡 关键解读：</strong>
+              <code style="background:rgba(255,255,255,0.1);padding:1px 4px;border-radius:3px;">Recall@1 (流失)</code> = 针对 <strong>Churned=Yes</strong> 的召回率，即"实际流失用户中被正确识别的比例"。
+              XGBoost 虽然 Accuracy 最高(0.8386)，但流失召回率仅 53.3%，意味着 <strong style="color:var(--netflix-red);">46.7% 的流失用户被漏检</strong>，
+              从业务角度损失巨大。LightGBM 在流失召回率(88.8%)与 AUC(0.908)之间取得最佳平衡。
+            </div>
           </div>
         </div>
         <div class="grid-2 fade-in" style="gap:20px;">
@@ -1438,7 +1454,8 @@
                 ✅ 调优后集成模型 AUC 均达到 <strong class="text-red">0.90+</strong><br>
                 ✅ ROC 曲线呈现清晰弧度（vs 调优前 AUC ≈ 0.52）<br>
                 ✅ HalvingSearch 节省 <strong class="text-green">70% 训练时间</strong><br>
-                ✅ XGBoost F1 最高，推荐生产部署
+                ✅ <strong class="text-green">LightGBM 流失召回率 88.8%</strong>，生产部署首选<br>
+                ⚠️ XGBoost Accuracy 最高，但流失召回率仅 53.3%
               </div>
             </div>
             <div class="card" style="padding:0;overflow:hidden;">
@@ -1628,8 +1645,8 @@
               <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(229,9,20,0.06);border:1px solid rgba(229,9,20,0.2);">
                 <div style="width:32px;height:32px;background:rgba(229,9,20,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">③</div>
                 <div>
-                  <div style="font-size:13px;font-weight:600;color:var(--netflix-red);">XGBoost/LightGBM 推理</div>
-                  <div style="font-size:11px;color:var(--text-secondary);">GPU 加速，推理延迟 <strong class="text-green">&lt; 5ms</strong></div>
+                  <div style="font-size:13px;font-weight:600;color:var(--accent-green);">LightGBM 推理</div>
+                  <div style="font-size:11px;color:var(--text-secondary);">GPU 加速，<strong class="text-green">流失召回率88.8%</strong>，推理延迟 &lt; 5ms</div>
                 </div>
               </div>
               <div style="width:2px;height:16px;background:rgba(229,9,20,0.3);margin-left:30px;"></div>
@@ -1675,8 +1692,8 @@
             <div class="card">
               <div style="font-size:13px;font-weight:700;color:var(--accent-gold);margin-bottom:10px;">💡 模型选择建议</div>
               <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text-secondary);">
-                <div><strong style="color:var(--text-primary);">生产首选：</strong>XGBoost — F1 最高，精度与速度平衡</div>
-                <div><strong style="color:var(--text-primary);">超大数据：</strong>LightGBM — GPU 最快，AUC 0.908</div>
+                <div><strong style="color:var(--text-primary);">生产首选：</strong>LightGBM — <span class="text-green">流失召回率88.8%</span>，概率校准好</div>
+                <div><strong style="color:var(--text-primary);">高精度追求：</strong>XGBoost — Accuracy最高，但需调低阈值提升召回</div>
                 <div><strong style="color:var(--text-primary);">合规报告：</strong>LR — 系数可解读，AUC 最高 0.911</div>
                 <div><strong style="color:var(--text-primary);">特征分析：</strong>Random Forest — 重要性最可靠</div>
               </div>
