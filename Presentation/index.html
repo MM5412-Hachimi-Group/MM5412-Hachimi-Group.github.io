@@ -820,9 +820,9 @@
             </div>
             <div class="card" style="border-left:4px solid var(--accent-gold);">
               <div style="font-size:11px;letter-spacing:0.08em;color:var(--accent-gold);font-weight:700;text-transform:uppercase;margin-bottom:10px;">🗄️ 数据库选择</div>
-              <div class="body-sm" style="margin-bottom:12px;">使用 SQLite 作为轻量级本地数据库，支持快速原型验证与数据持久化</div>
+              <div class="body-sm" style="margin-bottom:12px;">使用 XAMPP 内置 MySQL 数据库，支持 SQL 查询、数据关联与多用户并发访问</div>
               <a href="https://www.apachefriends.org/" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(245,166,35,0.15);color:var(--accent-gold);border:1px solid rgba(245,166,35,0.3);border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;">
-                <span>🔧</span> XAMPP / SQLite
+                <span>🔧</span> XAMPP / MySQL
               </a>
             </div>
           </div>
@@ -876,50 +876,84 @@
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:14px;">
-            <h3 class="heading-2" style="font-size:18px;margin-bottom:4px;">🔬 关键发现汇总</h3>
-            <div class="feature-badge">
-              <span class="icon">📉</span>
-              <div class="text-wrap">
-                <div class="title">流失率分布不平衡</div>
-                <div class="desc">正负样本比例约为 7:3，需启用 class_weight='balanced'</div>
-              </div>
-            </div>
-            <div class="feature-badge">
-              <span class="icon">🌍</span>
-              <div class="text-wrap">
-                <div class="title">地区流失差异显著</div>
-                <div class="desc">Top 10 高流失国家主要来自亚太和拉美地区</div>
-              </div>
-            </div>
-            <div class="feature-badge">
-              <span class="icon">💳</span>
-              <div class="text-wrap">
-                <div class="title">订阅类型与流失关联性极低</div>
-                <div class="desc">经t检验验证，Basic/Standard/Premium用户流失率无统计显著差异</div>
-              </div>
-            </div>
-            <div class="feature-badge">
-              <span class="icon">⏰</span>
-              <div class="text-wrap">
-                <div class="title">登录间隔是强预警信号</div>
-                <div class="desc">14天未登录的用户，30天内流失概率超过 60%</div>
-              </div>
-            </div>
-            <div class="feature-badge">
-              <span class="icon">📱</span>
-              <div class="text-wrap">
-                <div class="title">设备数量与留存正相关</div>
-                <div class="desc">使用 2+ 设备的用户留存率比单设备用户高约 28%</div>
+            <h3 class="heading-2" style="font-size:18px;margin-bottom:4px;">🔬 独立样本 T 检验结果</h3>
+            <div class="card" style="padding:16px;">
+              <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;font-weight:600;">⚠️ 原始标签与特征相关性检验</div>
+              <div style="font-size:11px;color:var(--accent-gold);margin-bottom:10px;">H₀: 流失用户与非流失用户的特征均值无差异</div>
+              <table class="netflix-table" style="font-size:11px;">
+                <thead>
+                  <tr>
+                    <th style="padding:8px 10px;">特征</th>
+                    <th style="padding:8px 10px;text-align:center;">流失均值</th>
+                    <th style="padding:8px 10px;text-align:center;">未流失均值</th>
+                    <th style="padding:8px 10px;text-align:center;">p值</th>
+                    <th style="padding:8px 10px;text-align:center;">r</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="padding:6px 10px;">age</td>
+                    <td style="padding:6px 10px;text-align:center;">40.91</td>
+                    <td style="padding:6px 10px;text-align:center;">41.00</td>
+                    <td style="padding:6px 10px;text-align:center;">0.589</td>
+                    <td style="padding:6px 10px;text-align:center;">-0.002</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 10px;">account_age_months</td>
+                    <td style="padding:6px 10px;text-align:center;">29.64</td>
+                    <td style="padding:6px 10px;text-align:center;">29.93</td>
+                    <td style="padding:6px 10px;text-align:center;">0.126</td>
+                    <td style="padding:6px 10px;text-align:center;">-0.007</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 10px;">monthly_fee</td>
+                    <td style="padding:6px 10px;text-align:center;">12.28</td>
+                    <td style="padding:6px 10px;text-align:center;">12.33</td>
+                    <td style="padding:6px 10px;text-align:center;">0.166</td>
+                    <td style="padding:6px 10px;text-align:center;">-0.006</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 10px;">avg_watch_time_mins</td>
+                    <td style="padding:6px 10px;text-align:center;">154.1</td>
+                    <td style="padding:6px 10px;text-align:center;">155.2</td>
+                    <td style="padding:6px 10px;text-align:center;">0.262</td>
+                    <td style="padding:6px 10px;text-align:center;">-0.005</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 10px;">watch_sessions_per_week</td>
+                    <td style="padding:6px 10px;text-align:center;">9.95</td>
+                    <td style="padding:6px 10px;text-align:center;">10.00</td>
+                    <td style="padding:6px 10px;text-align:center;">0.433</td>
+                    <td style="padding:6px 10px;text-align:center;">-0.004</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 10px;">completion_rate</td>
+                    <td style="padding:6px 10px;text-align:center;">64.46</td>
+                    <td style="padding:6px 10px;text-align:center;">64.55</td>
+                    <td style="padding:6px 10px;text-align:center;">0.681</td>
+                    <td style="padding:6px 10px;text-align:center;">-0.002</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 10px;">days_since_last_login</td>
+                    <td style="padding:6px 10px;text-align:center;">29.43</td>
+                    <td style="padding:6px 10px;text-align:center;">29.41</td>
+                    <td style="padding:6px 10px;text-align:center;">0.919</td>
+                    <td style="padding:6px 10px;text-align:center;">0.001</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="margin-top:12px;padding:10px;background:rgba(229,9,20,0.1);border:1px solid rgba(229,9,20,0.2);border-radius:6px;font-size:11px;color:var(--text-secondary);">
+                <span style="color:var(--netflix-red);">❌ 所有特征 p > 0.05，相关系数接近 0</span> → 原始标签含大量随机噪声，直接使用 AUC ≈ 0.52
               </div>
             </div>
           </div>
         </div>
         <div class="fade-in">
-          <div class="card" style="padding:16px 20px;">
-            <div style="font-size:12px;font-weight:700;color:var(--netflix-red);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">📌 关键结论</div>
-            <div class="body-sm" style="line-height:1.6;">
-              <div style="color:var(--accent-gold);margin-bottom:8px;">⚠️ 原始标签问题：所有特征 p &gt; 0.05，相关系数接近 0</div>
-              <div style="color:var(--accent-green);">✅ 解决方案：基于业务逻辑重建标签，验证 AUC 达到 0.91</div>
+          <div class="card" style="padding:16px 20px;border-left:4px solid var(--accent-green);">
+            <div style="font-size:12px;font-weight:700;color:var(--accent-green);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">✅ 解决方案</div>
+            <div style="font-size:13px;line-height:1.6;">
+              基于业务逻辑重建标签：6因子加权评分 → Sigmoid映射 → 35%噪声注入 → 80th百分位阈值<br>
+              <span style="color:var(--accent-green);font-weight:600;">验证结果：AUC 从 0.52 提升至 0.91</span>
             </div>
           </div>
         </div>
@@ -1078,10 +1112,10 @@
           <div class="divider-red"></div>
           <h2 class="display-2">衍生特征<br><span class="text-red">构建详情</span></h2>
         </div>
-        <div class="grid-2 fade-in" style="gap:20px;align-items:start;height:calc(100vh - 280px);">
+        <div class="grid-2 fade-in" style="gap:20px;align-items:start;margin-top:-10px;">
           <div style="display:flex;flex-direction:column;gap:12px;">
             <h3 class="heading-2" style="font-size:15px;margin-bottom:8px;">💻 特征工程代码</h3>
-            <div style="background:#1e1e1e;border-radius:8px;padding:12px;font-family:'Fira Code','Consolas',monospace;font-size:9px;line-height:1.4;color:#d4d4d4;overflow-x:auto;border:1px solid rgba(255,255,255,0.1);flex:1;">
+            <div style="background:#1e1e1e;border-radius:8px;padding:12px;font-family:'Fira Code','Consolas',monospace;font-size:9px;line-height:1.4;color:#d4d4d4;overflow-x:auto;border:1px solid rgba(255,255,255,0.1);">
               <div style="color:#6a9955;"># 构建4个高信息量衍生特征</div>
               <div style="color:#9cdcfe;">df_model</span> = df.copy()</div>
               <br/>
@@ -1110,42 +1144,11 @@
               <div style="padding-left:10px;">df_model['content_interactions']</div>
               <div>)</div>
             </div>
-            <h3 class="heading-2" style="font-size:15px;margin:8px 0 6px;">📊 特征说明</h3>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-              <div class="feature-badge" style="padding:8px;">
-                <span class="icon" style="background:var(--netflix-red);width:28px;height:28px;font-size:12px;">🔥</span>
-                <div class="text-wrap">
-                  <div class="title" style="font-size:11px;"><code style="color:var(--netflix-red);">inactive_pressure</code></div>
-                  <div class="desc" style="font-size:9px;">登录间隔/频次 → 流失风险</div>
-                </div>
-              </div>
-              <div class="feature-badge" style="padding:8px;">
-                <span class="icon" style="background:#3b9ef5;width:28px;height:28px;font-size:12px;">📺</span>
-                <div class="text-wrap">
-                  <div class="title" style="font-size:11px;"><code style="color:#3b9ef5;">content_depth</code></div>
-                  <div class="desc" style="font-size:9px;">完播率×时长 → 匹配度</div>
-                </div>
-              </div>
-              <div class="feature-badge" style="padding:8px;">
-                <span class="icon" style="background:var(--accent-green);width:28px;height:28px;font-size:12px;">⭐</span>
-                <div class="text-wrap">
-                  <div class="title" style="font-size:11px;"><code style="color:var(--accent-green);">loyalty_score</code></div>
-                  <div class="desc" style="font-size:9px;">年龄×频次 → 忠诚度</div>
-                </div>
-              </div>
-              <div class="feature-badge" style="padding:8px;">
-                <span class="icon" style="background:var(--accent-gold);width:28px;height:28px;font-size:12px;">🎯</span>
-                <div class="text-wrap">
-                  <div class="title" style="font-size:11px;"><code style="color:var(--accent-gold);">rec_depth</code></div>
-                  <div class="desc" style="font-size:9px;">点击×互动 → 推荐效果</div>
-                </div>
-              </div>
-            </div>
           </div>
-          <div style="display:flex;flex-direction:column;height:100%;">
+          <div style="display:flex;flex-direction:column;">
             <h3 class="heading-2" style="font-size:15px;margin-bottom:8px;">🔍 特征相关性热力图</h3>
-            <div style="flex:1;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.1);overflow:hidden;">
-              <img src="Image/03_correlation_heatmap.png" alt="特征相关性热力图" style="max-width:100%;max-height:100%;object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
+            <div style="display:flex;align-items:flex-start;justify-content:center;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.1);overflow:hidden;">
+              <img src="Image/03_correlation_heatmap.png" alt="特征相关性热力图" style="width:100%;max-height:420px;object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
               <div style="display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px;">
                 <div style="font-size:48px;margin-bottom:12px;">📊</div>
                 <div style="font-size:13px;color:var(--text-secondary);text-align:center;">特征相关性热力图</div>
