@@ -76,11 +76,14 @@
   }
   .navbar.scrolled { background: rgba(20,20,20,0.97); }
   .nav-logo {
-    font-size: 28px;
-    font-weight: 900;
-    color: var(--netflix-red);
-    letter-spacing: -1px;
-    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+  }
+  .nav-logo img {
+    height: 36px;
+    width: auto;
+    object-fit: contain;
+    display: block;
   }
   .nav-title {
     font-size: 13px;
@@ -170,7 +173,7 @@
   /* ─── NAVIGATION ARROWS ─── */
   .nav-arrow {
     position: fixed;
-    bottom: 36px;
+    bottom: -70px;
     background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.15);
     color: white;
@@ -184,6 +187,11 @@
     transition: all 0.25s;
     font-size: 20px;
     backdrop-filter: blur(8px);
+    opacity: 0;
+  }
+  .nav-arrow.visible {
+    bottom: 36px;
+    opacity: 1;
   }
   .nav-arrow:hover { background: var(--netflix-red); border-color: var(--netflix-red); transform: scale(1.08); }
   .nav-arrow.prev-btn { left: 50%; transform: translateX(calc(-50% - 35px)); }
@@ -609,9 +617,9 @@
 
 <!-- Navbar -->
 <nav class="navbar" id="navbar">
-  <div class="nav-logo">N</div>
-  <div class="nav-title">MM5412 · Hachimi Group · Business Intelligence</div>
-  <div class="nav-counter" id="slideCounter">01 / 10</div>
+  <div class="nav-logo"><img src="Image/netflix.png" alt="Netflix"></div>
+  <div class="nav-title">MM5412 · Hachimi Group · Business Intelligence And Decisions</div>
+  <div class="nav-counter" id="slideCounter">01 / 13</div>
 </nav>
 
 <!-- Slide Dots -->
@@ -717,7 +725,7 @@
                 <div class="stat-label">训练提速</div>
               </div>
               <div class="card" style="text-align:center;padding:18px 12px;">
-                <div class="stat-number" style="font-size:36px;color:var(--accent-gold);">11</div>
+                <div class="stat-number" style="font-size:36px;color:var(--accent-gold);">4</div>
                 <div class="stat-label">衍生特征</div>
               </div>
               <div class="card" style="text-align:center;padding:18px 12px;">
@@ -777,8 +785,54 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 3: EDA ─── -->
+  <!-- ─── SLIDE 3: DATA SOURCES ─── -->
   <div class="slide" id="slide-3">
+    <div class="slide-inner">
+      <div class="slide-label">数据来源</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">项目<span class="text-red">数据来源</span></h2>
+        </div>
+        <div class="grid-2 fade-in" style="gap:20px;">
+          <div class="card card-featured" style="border-left:4px solid var(--netflix-red);">
+            <div style="font-size:11px;letter-spacing:0.08em;color:var(--netflix-red);font-weight:700;text-transform:uppercase;margin-bottom:12px;">📁 数据集来源</div>
+            <div style="font-size:16px;font-weight:600;margin-bottom:10px;">Netflix 用户行为数据集</div>
+            <div class="body-sm" style="margin-bottom:16px;">Kaggle 公开数据集，包含 50,000 条用户记录，涵盖人口统计、订阅信息、观看行为等多维度特征</div>
+            <a href="https://www.kaggle.com/datasets/rhythmghai/netflix-user-watching-behavior-dataset/" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:var(--netflix-red);color:white;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;transition:all 0.2s;">
+              <span>📊</span> Kaggle 数据集
+            </a>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div class="card" style="border-left:4px solid #3b9ef5;">
+              <div style="font-size:11px;letter-spacing:0.08em;color:#3b9ef5;font-weight:700;text-transform:uppercase;margin-bottom:10px;">💻 项目地址</div>
+              <div class="body-sm" style="margin-bottom:12px;">MM5412 Hachimi Group 研究项目完整代码与文档</div>
+              <a href="https://github.com/MM5412-Hachimi-Group/MM5412-Group-Project/" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(59,158,245,0.15);color:#3b9ef5;border:1px solid rgba(59,158,245,0.3);border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;">
+                <span>🔗</span> GitHub Repository
+              </a>
+            </div>
+            <div class="card" style="border-left:4px solid var(--accent-green);">
+              <div style="font-size:11px;letter-spacing:0.08em;color:var(--accent-green);font-weight:700;text-transform:uppercase;margin-bottom:10px;">📝 代码展示</div>
+              <div class="body-sm" style="margin-bottom:12px;">Jupyter Notebook 交互式代码展示，包含完整的数据分析、特征工程与模型训练流程</div>
+              <a href="https://mm5412-hachimi-group.github.io/Code/" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(70,211,105,0.15);color:var(--accent-green);border:1px solid rgba(70,211,105,0.3);border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;">
+                <span>📓</span> 代码展示站
+              </a>
+            </div>
+            <div class="card" style="border-left:4px solid var(--accent-gold);">
+              <div style="font-size:11px;letter-spacing:0.08em;color:var(--accent-gold);font-weight:700;text-transform:uppercase;margin-bottom:10px;">🗄️ 数据库选择</div>
+              <div class="body-sm" style="margin-bottom:12px;">使用 SQLite 作为轻量级本地数据库，支持快速原型验证与数据持久化</div>
+              <a href="https://www.apachefriends.org/" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(245,166,35,0.15);color:var(--accent-gold);border:1px solid rgba(245,166,35,0.3);border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;">
+                <span>🔧</span> XAMPP / SQLite
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 4: EDA ─── -->
+  <div class="slide" id="slide-4">
     <div class="slide-inner">
       <div class="slide-label">探索性数据分析</div>
       <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
@@ -840,8 +894,8 @@
             <div class="feature-badge">
               <span class="icon">💳</span>
               <div class="text-wrap">
-                <div class="title">Basic 套餐流失率最高</div>
-                <div class="desc">Premium 用户忠诚度显著更高，月费与留存率正相关</div>
+                <div class="title">订阅类型与流失关联性极低</div>
+                <div class="desc">经t检验验证，Basic/Standard/Premium用户流失率无统计显著差异</div>
               </div>
             </div>
             <div class="feature-badge">
@@ -862,23 +916,10 @@
         </div>
         <div class="fade-in">
           <div class="card" style="padding:16px 20px;">
-            <div style="font-size:12px;font-weight:700;color:var(--netflix-red);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">订阅类型 × 流失率</div>
-            <div class="bar-chart">
-              <div class="bar-row">
-                <div class="bar-label">Basic</div>
-                <div class="bar-track"><div class="bar-fill" data-width="72" style="width:72%"></div></div>
-                <div class="bar-val text-red">高</div>
-              </div>
-              <div class="bar-row">
-                <div class="bar-label">Standard</div>
-                <div class="bar-track"><div class="bar-fill blue" data-width="45" style="width:45%"></div></div>
-                <div class="bar-val" style="color:#3b9ef5;">中</div>
-              </div>
-              <div class="bar-row">
-                <div class="bar-label">Premium</div>
-                <div class="bar-track"><div class="bar-fill green" data-width="22" style="width:22%"></div></div>
-                <div class="bar-val text-green">低</div>
-              </div>
+            <div style="font-size:12px;font-weight:700;color:var(--netflix-red);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">📌 关键结论</div>
+            <div class="body-sm" style="line-height:1.6;">
+              <div style="color:var(--accent-gold);margin-bottom:8px;">⚠️ 原始标签问题：所有特征 p &gt; 0.05，相关系数接近 0</div>
+              <div style="color:var(--accent-green);">✅ 解决方案：基于业务逻辑重建标签，验证 AUC 达到 0.91</div>
             </div>
           </div>
         </div>
@@ -886,8 +927,8 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 4: FEATURE ENGINEERING ─── -->
-  <div class="slide" id="slide-4">
+  <!-- ─── SLIDE 5: FEATURE ENGINEERING ─── -->
+  <div class="slide" id="slide-5">
     <div class="slide-inner">
       <div class="slide-label">标签重建 · 特征工程</div>
       <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
@@ -912,51 +953,45 @@
               </div>
             </div>
             <div style="margin-top:14px;" class="card">
-              <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;font-weight:600;">重建逻辑规则</div>
-              <div style="font-family:monospace;font-size:12px;color:var(--accent-green);line-height:2;background:rgba(0,0,0,0.3);padding:10px;border-radius:6px;">
-                流失 = 1 当满足以下任意条件：<br>
-                • 登录间隔 &gt; 30 天<br>
-                • 每周观看 &lt; 1 次 且 账期 &gt; 3 月<br>
-                • 完播率 &lt; 20% 且 内容深度低
+              <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;font-weight:600;">📊 6因子加权评分体系</div>
+              <div style="font-family:monospace;font-size:11px;color:var(--accent-green);line-height:1.8;background:rgba(0,0,0,0.3);padding:10px;border-radius:6px;">
+                风险分 = (登录间隔/60)×0.35 + (1-观看频次/21)×0.20<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + (1-完播率/100)×0.18 + (1-平均时长/350)×0.12<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + (1-推荐点击率/100)×0.08 + (1-账龄/48)×0.07<br><br>
+                流失阈值：80th百分位（约20%流失率）<br>
+                添加35%随机噪声模拟真实隐性因素
               </div>
             </div>
           </div>
           <div>
-            <h3 class="heading-2" style="font-size:17px;margin-bottom:14px;">⚗️ 11 个衍生组合特征</h3>
+            <h3 class="heading-2" style="font-size:17px;margin-bottom:14px;">⚗️ 4 个衍生组合特征</h3>
             <div style="display:flex;flex-direction:column;gap:8px;">
               <div class="feature-badge">
                 <span class="icon">🔥</span>
                 <div class="text-wrap">
                   <div class="title"><code style="color:var(--netflix-red);">inactive_pressure</code></div>
-                  <div class="desc">登录间隔 × (1 − 观看频次/最大频次)，最强预测因子</div>
+                  <div class="desc">登录间隔÷(观看频次+1) — 高间隔+低频次=极高风险</div>
                 </div>
               </div>
               <div class="feature-badge">
                 <span class="icon">📺</span>
                 <div class="text-wrap">
                   <div class="title"><code style="color:#3b9ef5;">content_depth</code></div>
-                  <div class="desc">完播率 × 平均单次时长，衡量内容消费深度</div>
+                  <div class="desc">完播率×平均时长/100 — 综合内容消费黏性指标</div>
                 </div>
               </div>
               <div class="feature-badge">
                 <span class="icon">💎</span>
                 <div class="text-wrap">
                   <div class="title"><code style="color:var(--accent-green);">loyalty_score</code></div>
-                  <div class="desc">账户年龄 × 登录频次 / 100，忠诚度综合指数</div>
+                  <div class="desc">账户年龄×观看频次 — 长期留存用户的量化指标</div>
                 </div>
               </div>
               <div class="feature-badge">
                 <span class="icon">🎯</span>
                 <div class="text-wrap">
                   <div class="title"><code style="color:var(--accent-gold);">rec_depth</code></div>
-                  <div class="desc">推荐点击率 × 互动次数，推荐系统效果指标</div>
-                </div>
-              </div>
-              <div class="feature-badge">
-                <span class="icon">📊</span>
-                <div class="text-wrap">
-                  <div class="title">+ 7 个价值行为特征</div>
-                  <div class="desc">设备多样性、峰值/低谷观看比、订阅价值密度等</div>
+                  <div class="desc">推荐点击率×互动次数/100 — 推荐系统转化效果</div>
                 </div>
               </div>
             </div>
@@ -966,8 +1001,164 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 5: MODELS ─── -->
-  <div class="slide" id="slide-5">
+  <!-- ─── SLIDE 6: LABEL RECONSTRUCTION DETAILS ─── -->
+  <div class="slide" id="slide-6">
+    <div class="slide-inner">
+      <div class="slide-label">标签重建 · 特征工程</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">标签重建<br><span class="text-red">详细步骤</span></h2>
+        </div>
+        <div class="grid-2 fade-in" style="gap:20px;">
+          <div>
+            <h3 class="heading-2" style="font-size:16px;margin-bottom:12px;">📋 四步重建流程</h3>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div class="card" style="border-left:3px solid var(--netflix-red);padding:12px 14px;">
+                <div style="font-size:12px;font-weight:700;color:var(--netflix-red);margin-bottom:6px;">Step 1: 业务加权评分</div>
+                <div class="body-sm">6个特征按行业权重加权，对应真实流失驱动因子</div>
+              </div>
+              <div class="card" style="border-left:3px solid #3b9ef5;padding:12px 14px;">
+                <div style="font-size:12px;font-weight:700;color:#3b9ef5;margin-bottom:6px;">Step 2: Sigmoid 映射</div>
+                <div class="body-sm">将线性得分转为概率，产生连续概率分布</div>
+              </div>
+              <div class="card" style="border-left:3px solid var(--accent-gold);padding:12px 14px;">
+                <div style="font-size:12px;font-weight:700;color:var(--accent-gold);margin-bottom:6px;">Step 3: 35% 随机噪声</div>
+                <div class="body-sm">混入均匀随机扰动，模拟不可观测的隐性因素</div>
+              </div>
+              <div class="card" style="border-left:3px solid var(--accent-green);padding:12px 14px;">
+                <div style="font-size:12px;font-weight:700;color:var(--accent-green);margin-bottom:6px;">Step 4: 80th 百分位阈值</div>
+                <div class="body-sm">概率 > 阈值 → 流失，控制流失率约20%，贴近行业平均</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 class="heading-2" style="font-size:16px;margin-bottom:12px;">💻 Python 实现代码</h3>
+            <div style="background:#1e1e1e;border-radius:8px;padding:14px;font-family:'Fira Code','Consolas',monospace;font-size:11px;line-height:1.6;color:#d4d4d4;overflow-x:auto;border:1px solid rgba(255,255,255,0.1);">
+              <div style="color:#6a9955;"># 业务逻辑流失概率计算</div>
+              <div style="color:#c586c0;">def</span> <span style="color:#dcdcaa;">compute_churn_prob</span>(<span style="color:#9cdcfe;">row</span>):</div>
+              <div style="padding-left:12px;color:#9cdcfe;">s</span> = (row['days_since_last_login'] / <span style="color:#b5cea8;">60.0</span>) * <span style="color:#b5cea8;">0.35</span></div>
+              <div style="padding-left:12px;">s += (<span style="color:#b5cea8;">1</span> - row['watch_sessions_per_week'] / <span style="color:#b5cea8;">21.0</span>) * <span style="color:#b5cea8;">0.20</span></div>
+              <div style="padding-left:12px;">s += (<span style="color:#b5cea8;">1</span> - row['completion_rate'] / <span style="color:#b5cea8;">100.0</span>) * <span style="color:#b5cea8;">0.18</span></div>
+              <div style="padding-left:12px;">s += (<span style="color:#b5cea8;">1</span> - row['avg_watch_time_minutes'] / <span style="color:#b5cea8;">350.0</span>) * <span style="color:#b5cea8;">0.12</span></div>
+              <div style="padding-left:12px;">...</div>
+              <div style="padding-left:12px;color:#c586c0;">return</span> <span style="color:#b5cea8;">1.0</span> / (<span style="color:#b5cea8;">1.0</span> + np.exp(<span style="color:#b5cea8;">-8.0</span> * (s - <span style="color:#b5cea8;">0.5</span>)))</div>
+              <br/>
+              <div style="color:#6a9955;"># 添加35%随机噪声，模拟真实隐性因素</div>
+              <div style="color:#9cdcfe;">noise</span> = np.random.uniform(<span style="color:#b5cea8;">0</span>, <span style="color:#b5cea8;">1</span>, len(df_raw))</div>
+              <div style="color:#9cdcfe;">noisy_score</span> = <span style="color:#b5cea8;">0.65</span> * risk_scores + <span style="color:#b5cea8;">0.35</span> * noise</div>
+              <br/>
+              <div style="color:#6a9955;"># 以80th百分位为阈值生成标签</div>
+              <div style="color:#9cdcfe;">churn_threshold</span> = np.percentile(noisy_score, <span style="color:#b5cea8;">80</span>)</div>
+              <div style="color:#9cdcfe;">churn_label</span> = (noisy_score >= churn_threshold).astype(<span style="color:#4ec9b0;">int</span>)</div>
+            </div>
+          </div>
+        </div>
+        <div class="fade-in">
+          <div class="card" style="padding:14px 20px;background:linear-gradient(90deg,rgba(46,204,113,0.1) 0%,rgba(46,204,113,0.05) 100%);border-left:4px solid var(--accent-green);">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="font-size:24px;">✅</div>
+              <div>
+                <div style="font-size:14px;font-weight:700;color:var(--accent-green);margin-bottom:4px;">验证结果</div>
+                <div style="font-size:13px;color:var(--text-secondary);">重建后 AUC ≈ <span style="color:var(--accent-green);font-weight:700;">0.911</span>，ROC曲线呈现清晰弧度，证明标签具有真实预测意义</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 7: FEATURE ENGINEERING DETAILS ─── -->
+  <div class="slide" id="slide-7">
+    <div class="slide-inner">
+      <div class="slide-label">标签重建 · 特征工程</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">衍生特征<br><span class="text-red">构建详情</span></h2>
+        </div>
+        <div class="grid-2 fade-in" style="gap:20px;align-items:start;height:calc(100vh - 280px);">
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <h3 class="heading-2" style="font-size:15px;margin-bottom:8px;">💻 特征工程代码</h3>
+            <div style="background:#1e1e1e;border-radius:8px;padding:12px;font-family:'Fira Code','Consolas',monospace;font-size:9px;line-height:1.4;color:#d4d4d4;overflow-x:auto;border:1px solid rgba(255,255,255,0.1);flex:1;">
+              <div style="color:#6a9955;"># 构建4个高信息量衍生特征</div>
+              <div style="color:#9cdcfe;">df_model</span> = df.copy()</div>
+              <br/>
+              <div style="color:#6a9955;"># 特征1：非活跃压力指数</div>
+              <div style="color:#6a9955;"># 高间隔 + 低频次 = 极高流失风险</div>
+              <div style="color:#9cdcfe;">df_model</span>['inactive_pressure'] = (</div>
+              <div style="padding-left:10px;">df_model['days_since_last_login'] /</div>
+              <div style="padding-left:10px;">(df_model['watch_sessions_per_week'] + <span style="color:#b5cea8;">1.0</span>)</div>
+              <div>)</div>
+              <br/>
+              <div style="color:#6a9955;"># 特征2：内容消费深度</div>
+              <div style="color:#9cdcfe;">df_model</span>['content_depth'] = (</div>
+              <div style="padding-left:10px;">df_model['completion_rate'] *</div>
+              <div style="padding-left:10px;">df_model['avg_watch_time_minutes'] / <span style="color:#b5cea8;">100.0</span></div>
+              <div>)</div>
+              <br/>
+              <div style="color:#6a9955;"># 特征3：忠诚度得分</div>
+              <div style="color:#9cdcfe;">df_model</span>['loyalty_score'] = (</div>
+              <div style="padding-left:10px;">df_model['account_age_months'] *</div>
+              <div style="padding-left:10px;">df_model['watch_sessions_per_week']</div>
+              <div>)</div>
+              <br/>
+              <div style="color:#6a9955;"># 特征4：推荐系统深度</div>
+              <div style="color:#9cdcfe;">df_model</span>['rec_depth'] = (</div>
+              <div style="padding-left:10px;">df_model['recommendation_click_rate'] *</div>
+              <div style="padding-left:10px;">df_model['content_interactions']</div>
+              <div>)</div>
+            </div>
+            <h3 class="heading-2" style="font-size:15px;margin:8px 0 6px;">📊 特征说明</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div class="feature-badge" style="padding:8px;">
+                <span class="icon" style="background:var(--netflix-red);width:28px;height:28px;font-size:12px;">🔥</span>
+                <div class="text-wrap">
+                  <div class="title" style="font-size:11px;"><code style="color:var(--netflix-red);">inactive_pressure</code></div>
+                  <div class="desc" style="font-size:9px;">登录间隔/频次 → 流失风险</div>
+                </div>
+              </div>
+              <div class="feature-badge" style="padding:8px;">
+                <span class="icon" style="background:#3b9ef5;width:28px;height:28px;font-size:12px;">📺</span>
+                <div class="text-wrap">
+                  <div class="title" style="font-size:11px;"><code style="color:#3b9ef5;">content_depth</code></div>
+                  <div class="desc" style="font-size:9px;">完播率×时长 → 匹配度</div>
+                </div>
+              </div>
+              <div class="feature-badge" style="padding:8px;">
+                <span class="icon" style="background:var(--accent-green);width:28px;height:28px;font-size:12px;">⭐</span>
+                <div class="text-wrap">
+                  <div class="title" style="font-size:11px;"><code style="color:var(--accent-green);">loyalty_score</code></div>
+                  <div class="desc" style="font-size:9px;">年龄×频次 → 忠诚度</div>
+                </div>
+              </div>
+              <div class="feature-badge" style="padding:8px;">
+                <span class="icon" style="background:var(--accent-gold);width:28px;height:28px;font-size:12px;">🎯</span>
+                <div class="text-wrap">
+                  <div class="title" style="font-size:11px;"><code style="color:var(--accent-gold);">rec_depth</code></div>
+                  <div class="desc" style="font-size:9px;">点击×互动 → 推荐效果</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;height:100%;">
+            <h3 class="heading-2" style="font-size:15px;margin-bottom:8px;">🔍 特征相关性热力图</h3>
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.1);overflow:hidden;">
+              <img src="Image/03_correlation_heatmap.png" alt="特征相关性热力图" style="max-width:100%;max-height:100%;object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
+              <div style="display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px;">
+                <div style="font-size:48px;margin-bottom:12px;">📊</div>
+                <div style="font-size:13px;color:var(--text-secondary);text-align:center;">特征相关性热力图</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 8: MODELS ─── -->
+  <div class="slide" id="slide-8">
     <div class="slide-inner">
       <div class="slide-label">模型架构</div>
       <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
@@ -1045,8 +1236,8 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 6: RESULTS ─── -->
-  <div class="slide" id="slide-6">
+  <!-- ─── SLIDE 9: RESULTS ─── -->
+  <div class="slide" id="slide-9">
     <div class="slide-inner">
       <div class="slide-label">模型评估结果</div>
       <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
@@ -1192,8 +1383,8 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 7: BUSINESS INSIGHTS ─── -->
-  <div class="slide" id="slide-7">
+  <!-- ─── SLIDE 10: BUSINESS INSIGHTS ─── -->
+  <div class="slide" id="slide-10">
     <div class="slide-inner">
       <div class="slide-label">商业洞见</div>
       <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
@@ -1227,7 +1418,7 @@
               <div class="insight-card">
                 <div style="font-size:14px;font-weight:700;margin-bottom:6px;">② <code style="color:#3b9ef5;">content_depth</code> 低 — 内容匹配失效</div>
                 <div class="body-sm">完播率 &lt; 30% 且平均时长 &lt; 60 分钟的用户，流失风险显著偏高</div>
-                <div style="margin-top:8px;font-size:12px;color:var(--text-secondary);">→ 切换多样性推荐策略；在 40% 进度插入「换一部看」浮窗</div>
+                <div style="margin-top:8px;font-size:12px;color:var(--text-secondary);">→ 切换协同过滤到多样性推荐；在40%进度插入「换一部看」浮窗</div>
               </div>
             </div>
           </div>
@@ -1244,11 +1435,6 @@
                 <div class="body-sm">高点击率 × 高互动用户留存率最高，推荐系统是留存核心基础设施</div>
                 <div style="margin-top:8px;font-size:12px;color:var(--text-secondary);">→ 对 rec_depth 低用户单独优化推荐策略，提升个性化精度</div>
               </div>
-              <div class="insight-card gold">
-                <div style="font-size:14px;font-weight:700;margin-bottom:6px;">⑤ 套餐升级引导策略</div>
-                <div class="body-sm">Basic 套餐用户流失率最高，Premium 用户流失率最低</div>
-                <div style="margin-top:8px;font-size:12px;color:var(--text-secondary);">→ 对 Basic 用户定向推送升级优惠，目标转化率提升 15%+</div>
-              </div>
             </div>
           </div>
         </div>
@@ -1256,8 +1442,8 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 8: OPERATIONS MATRIX ─── -->
-  <div class="slide" id="slide-8">
+  <!-- ─── SLIDE 11: OPERATIONS MATRIX ─── -->
+  <div class="slide" id="slide-11">
     <div class="slide-inner">
       <div class="slide-label">精准运营矩阵</div>
       <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
@@ -1343,8 +1529,8 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 9: DEPLOYMENT ─── -->
-  <div class="slide" id="slide-9">
+  <!-- ─── SLIDE 12: DEPLOYMENT ─── -->
+  <div class="slide" id="slide-12">
     <div class="slide-inner">
       <div class="slide-label">生产部署</div>
       <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
@@ -1368,7 +1554,7 @@
                 <div style="width:32px;height:32px;background:rgba(0,113,235,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">②</div>
                 <div>
                   <div style="font-size:13px;font-weight:600;">特征计算</div>
-                  <div style="font-size:11px;color:var(--text-secondary);">含 inactive_pressure 等 11 个衍生特征</div>
+                  <div style="font-size:11px;color:var(--text-secondary);">含 inactive_pressure 等 4 个衍生特征（18原始+4衍生=22总特征）</div>
                 </div>
               </div>
               <div style="width:2px;height:16px;background:rgba(229,9,20,0.3);margin-left:30px;"></div>
@@ -1442,8 +1628,8 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 10: SUMMARY ─── -->
-  <div class="slide" id="slide-10">
+  <!-- ─── SLIDE 13: SUMMARY ─── -->
+  <div class="slide" id="slide-13">
     <div class="cover-bg"></div>
     <div class="cover-glow"></div>
     <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:40px;max-width:900px;text-align:center;">
@@ -1460,7 +1646,7 @@
         <div class="card card-featured">
           <div style="font-size:24px;margin-bottom:10px;">⚗️</div>
           <div style="font-size:14px;font-weight:700;margin-bottom:6px;">特征工程价值</div>
-          <div class="body-sm">11 个衍生特征中，<code style="color:var(--netflix-red);">inactive_pressure</code> 成为最强预测因子，验证了领域知识驱动的特征构建</div>
+          <div class="body-sm">4 个衍生特征中，<code style="color:var(--netflix-red);">inactive_pressure</code> 成为最强预测因子，验证了领域知识驱动的特征构建</div>
         </div>
         <div class="card card-featured">
           <div style="font-size:24px;margin-bottom:10px;">🚀</div>
@@ -1489,7 +1675,7 @@
       <div class="fade-in" style="padding-top:8px;">
         <div class="netflix-logo-big" style="font-size:14px;margin-bottom:12px;">HACHIMI GROUP · MM5412</div>
         <div class="body-sm">Business Intelligence &amp; Decision Analytics</div>
-        <button class="play-btn" style="margin-top:16px;background:transparent;border:2px solid var(--netflix-red);color:var(--netflix-red);" onclick="goToSlide(0)">
+        <button class="play-btn" style="margin-top:16px;background:transparent;border:2px solid var(--netflix-red);color:var(--netflix-red);display:block;margin-left:auto;margin-right:auto;" onclick="goToSlide(0)">
           ↺ 重新播放
         </button>
       </div>
@@ -1501,7 +1687,7 @@
 <script>
   // ─── STATE ───
   let currentSlide = 0;
-  const totalSlides = 10;
+  const totalSlides = 13;
 
   // ─── CURSOR ───
   const cursor = document.getElementById('cursor');
@@ -1541,6 +1727,24 @@
     dotsContainer.appendChild(dot);
   }
 
+  // ─── NAV ARROWS VISIBILITY ───
+  let arrowsVisible = false;
+  const prevBtnEl = document.getElementById('prevBtn');
+  const nextBtnEl = document.getElementById('nextBtn');
+
+  document.addEventListener('mousemove', e => {
+    const show = e.clientY > window.innerHeight - 100;
+    if (show && !arrowsVisible) {
+      prevBtnEl.classList.add('visible');
+      nextBtnEl.classList.add('visible');
+      arrowsVisible = true;
+    } else if (!show && arrowsVisible) {
+      prevBtnEl.classList.remove('visible');
+      nextBtnEl.classList.remove('visible');
+      arrowsVisible = false;
+    }
+  });
+
   // ─── UPDATE UI ───
   function updateUI() {
     // Counter
@@ -1553,9 +1757,9 @@
     document.querySelectorAll('.dot').forEach((d, i) => {
       d.classList.toggle('active', i === currentSlide);
     });
-    // Prev/Next
-    document.getElementById('prevBtn').style.opacity = currentSlide === 0 ? '0.3' : '1';
-    document.getElementById('nextBtn').style.opacity = currentSlide === totalSlides - 1 ? '0.3' : '1';
+    // Prev/Next buttons disabled state
+    prevBtnEl.style.opacity = currentSlide === 0 ? '0.3' : '1';
+    nextBtnEl.style.opacity = currentSlide === totalSlides - 1 ? '0.3' : '1';
   }
 
   // ─── CHANGE SLIDE ───
