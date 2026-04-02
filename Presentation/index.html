@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="./image/netflix.png" type="image/x-icon">
 <title>Netflix 用户流失预测 | Hachimi Group | MM5412</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Netflix+Sans:wght@300;400;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1508,7 +1509,7 @@
           </div>
         </div>
         <div class="grid-2 fade-in" style="gap:20px;">
-          <div class="card" style="display:flex;flex-direction:column;align-items:stretch;">
+          <div class="card" style="display:flex;flex-direction:column;align-items:stretch;padding-bottom:16px;">
             <div style="font-size:13px;font-weight:700;color:var(--netflix-red);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:14px;">📊 AUC 对比（调优前 vs 后）</div>
             <div class="bar-chart">
               <div class="bar-row">
@@ -1555,17 +1556,102 @@
                 ⚠️ XGBoost Accuracy 最高，但流失召回率仅 53.3%
               </div>
             </div>
-            <div class="card" style="padding:0;overflow:hidden;">
-              <img src="./Image/09_confusion_matrices.png" alt="混淆矩阵对比" style="width:100%;display:block;" data-zoomable onclick="openLightbox(this.src, this.alt); event.stopPropagation();"/>
-            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ─── SLIDE 11: BUSINESS INSIGHTS ─── -->
+  <!-- ─── SLIDE 11: RESULTS (PART 2) - WITH CHART ─── -->
   <div class="slide" id="slide-11">
+    <div class="slide-inner">
+      <div class="slide-label">模型评估结果</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">最终模型<br><span class="text-red">性能评估</span></h2>
+        </div>
+        <div class="fade-in">
+          <div class="card" style="padding:0;overflow:hidden;">
+            <table class="netflix-table">
+              <thead>
+                <tr>
+                  <th>模型</th>
+                  <th>Accuracy</th>
+                  <th>Precision</th>
+                  <th>Recall (总体)</th>
+                  <th>F1 Score</th>
+                  <th>AUC</th>
+                  <th>Recall@1 (流失)</th>
+                  <th>训练时间</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span style="font-weight:600;">Logistic Regression</span></td>
+                  <td>0.8220</td>
+                  <td>0.8755</td>
+                  <td>0.8220</td>
+                  <td>0.8357</td>
+                  <td><span class="text-red" style="font-weight:700;">0.9110</span></td>
+                  <td><span class="text-green" style="font-weight:700;">86.8%</span></td>
+                  <td>0.047s</td>
+                </tr>
+                <tr>
+                  <td><span style="font-weight:600;">Decision Tree</span></td>
+                  <td>0.7776</td>
+                  <td>0.8672</td>
+                  <td>0.7776</td>
+                  <td>0.7980</td>
+                  <td>0.8849</td>
+                  <td style="color:var(--accent-gold);">89.6%</td>
+                  <td>0.229s</td>
+                </tr>
+                <tr>
+                  <td><span style="font-weight:600;">XGBoost (GPU)</span></td>
+                  <td style="color:var(--text-primary);">0.8386</td>
+                  <td>0.8316</td>
+                  <td>0.8386</td>
+                  <td style="color:var(--text-primary);font-weight:700;">0.8344</td>
+                  <td>0.9001</td>
+                  <td style="color:var(--netflix-red);">53.3% ⚠️</td>
+                  <td>1.053s</td>
+                </tr>
+                <tr class="highlight-row" style="background:rgba(70,211,105,0.08);">
+                  <td><span style="font-weight:700;color:var(--accent-green);">🏆 LightGBM (GPU)</span></td>
+                  <td>0.8112</td>
+                  <td>0.8759</td>
+                  <td>0.8112</td>
+                  <td>0.8269</td>
+                  <td>0.9077</td>
+                  <td><span class="text-green" style="font-weight:700;">88.8%</span></td>
+                  <td>0.834s</td>
+                </tr>
+                <tr>
+                  <td><span style="font-weight:600;">Random Forest</span></td>
+                  <td>0.8234</td>
+                  <td>0.8653</td>
+                  <td>0.8234</td>
+                  <td>0.8354</td>
+                  <td>0.9073</td>
+                  <td>81.5%</td>
+                  <td>0.918s</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="fade-in">
+          <div class="card" style="padding:0;overflow:hidden;">
+            <img src="./Image/09_confusion_matrices.png" alt="混淆矩阵对比" style="width:100%;display:block;" data-zoomable onclick="openLightbox(this.src, this.alt); event.stopPropagation();"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 12: BUSINESS INSIGHTS ─── -->
+  <div class="slide" id="slide-12">
     <div class="slide-inner">
       <div class="slide-label">商业洞见</div>
       <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
@@ -1623,8 +1709,8 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 12: OPERATIONS MATRIX ─── -->
-  <div class="slide" id="slide-12">
+  <!-- ─── SLIDE 13: OPERATIONS MATRIX ─── -->
+  <div class="slide" id="slide-13">
     <div class="slide-inner">
       <div class="slide-label">精准运营矩阵</div>
       <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
@@ -1710,8 +1796,8 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 13: DEPLOYMENT ─── -->
-  <div class="slide" id="slide-13">
+  <!-- ─── SLIDE 14: DEPLOYMENT ─── -->
+  <div class="slide" id="slide-14">
     <div class="slide-inner">
       <div class="slide-label">生产部署</div>
       <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
@@ -1809,8 +1895,8 @@
     </div>
   </div>
 
-  <!-- ─── SLIDE 14: SUMMARY ─── -->
-  <div class="slide" id="slide-14">
+  <!-- ─── SLIDE 15: SUMMARY ─── -->
+  <div class="slide" id="slide-15">
     <div class="cover-bg"></div>
     <div class="cover-glow"></div>
     <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:40px;max-width:900px;text-align:center;">
@@ -1868,7 +1954,7 @@
 <script>
   // ─── STATE ───
   let currentSlide = 0;
-  const totalSlides = 14;
+  const totalSlides = 15;
 
   // ─── CURSOR ───
   const cursor = document.getElementById('cursor');
