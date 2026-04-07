@@ -8542,16 +8542,6 @@ recommendation_click_rate  49.432  49.596 0.6131 -0.0023
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_churn_prob</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    基于真实订阅业务流失研究的加权风险评分：</span>
-<span class="sd">      - days_since_last_login  : 35% 权重（最强流失信号）</span>
-<span class="sd">      - watch_sessions_per_week: 20% 权重（使用习惯）</span>
-<span class="sd">      - completion_rate        : 18% 权重（内容匹配度）</span>
-<span class="sd">      - avg_watch_time_minutes : 12% 权重（深度参与）</span>
-<span class="sd">      - recommendation_click_rate: 8%（推荐接受度）</span>
-<span class="sd">      - account_age_months     :  7%（账户积累年龄）</span>
-<span class="sd">    使用 Sigmoid 函数将得分映射到 [0,1] 概率</span>
-<span class="sd">    """</span>
     <span class="n">s</span>  <span class="o">=</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">'days_since_last_login'</span><span class="p">]</span> <span class="o">/</span> <span class="mf">60.0</span><span class="p">)</span>                   <span class="o">*</span> <span class="mf">0.35</span>
     <span class="n">s</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s1">'watch_sessions_per_week'</span><span class="p">]</span> <span class="o">/</span> <span class="mf">21.0</span><span class="p">)</span>             <span class="o">*</span> <span class="mf">0.20</span>
     <span class="n">s</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s1">'completion_rate'</span><span class="p">]</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">)</span>                    <span class="o">*</span> <span class="mf">0.18</span>
@@ -8576,7 +8566,7 @@ recommendation_click_rate  49.432  49.596 0.6131 -0.0023
       <span class="sa">f</span><span class="s2">"(流失=</span><span class="si">{</span><span class="n">churn_label</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> / 未流失=</span><span class="si">{</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">churn_label</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"风险得分 — 均值: </span><span class="si">{</span><span class="n">noisy_score</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  std: </span><span class="si">{</span><span class="n">noisy_score</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="c1"># 验证重建后标签的可预测性</span>
+<span class="c1"># 再次测试可预测性</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelEncoder</span><span class="p">,</span> <span class="n">StandardScaler</span>
 <span class="n">df_check</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">df_check</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'user_id'</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">)</span>
@@ -8946,7 +8936,7 @@ max                29.50         296.01        1121.00      48.51
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><strong>解读：</strong> 重建后流失率为 <strong>20%</strong>，类别不平衡比约 4:1，属于中等不平衡场景。
+<p><strong>解读：</strong> 流失率为 <strong>20%</strong>，类别不平衡比约 4:1，属于中等不平衡场景。
 所有分类器均设置 <code>class_weight='balanced'</code> 自动补偿。
 20% 的流失率贴近订阅制流媒体行业实际水平（Netflix 公开年度流失率约 2–3%/月，即年化约 24%）。</p>
 </div>
