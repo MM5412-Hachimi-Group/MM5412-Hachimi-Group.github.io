@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社交媒体使用对生产力影响的分析报告</title>
+    <link rel="stylesheet" href="./CSS/style.css">
+</head>
+<body>
+    <!-- 背景效果 -->
+    <div class="background-effects">
+        <div class="bg-orb orb-1"></div>
+        <div class="bg-orb orb-2"></div>
+        <div class="bg-orb orb-3"></div>
+    </div>
+    <div class="grid-bg"></div>
+
+    <!-- 幻灯片容器 -->
+    <div class="slides-container">
+
+        <!-- 第1页：封面 -->
+        <div class="slide cover-slide active">
+            <div class="slide-content">
+                <h1 class="slide-title animate-fade-in-up">社交媒体使用对生产力影响分析</h1>
+                <p class="slide-subtitle animate-fade-in-up delay-1">MM5412 小组项目研究报告</p>
+                <div class="cover-meta animate-fade-in-up delay-2">
+                    <span>
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                        2024年12月
+                    </span>
+                    <span>
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                        MM5412 小组
+                    </span>
+                    <span>
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        机器学习与数据分析
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第2页：项目概述 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">项目概述</h2>
+                <p class="slide-subtitle">深入探索社交媒体使用习惯与个人生产力之间的关系</p>
+
+                <div class="grid-3 animate-fade-in-up delay-1">
+                    <div class="card stat-card">
+                        <div class="stat-number">6,000</div>
+                        <div class="stat-label">样本数据量</div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-number">9</div>
+                        <div class="stat-label">分析变量</div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-number">2</div>
+                        <div class="stat-label">预测模型类型</div>
+                    </div>
+                </div>
+
+                <div class="conclusion-box animate-fade-in-up delay-2">
+                    <h4>研究目标</h4>
+                    <p>本项目旨在通过数据分析揭示社交媒体使用习惯如何影响个人生产力，构建机器学习模型预测生产力得分和成瘾程度，为个人时间管理和健康使用社交媒体提供科学依据。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第3页：数据集说明 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">数据集说明</h2>
+                <p class="slide-subtitle">涵盖9个关键变量的综合数据集</p>
+
+                <div class="two-column animate-fade-in-up delay-1">
+                    <div style="flex: 0 0 auto;">
+                        <table class="data-table small-table">
+                            <thead>
+                                <tr>
+                                    <th>变量名</th>
+                                    <th>说明</th>
+                                    <th>类型</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>age</td><td>年龄</td><td><span class="tag tag-primary">数值</span></td></tr>
+                                <tr><td>daily_screen_time</td><td>每日屏幕使用时间</td><td><span class="tag tag-primary">数值</span></td></tr>
+                                <tr><td>social_media_hours</td><td>每日社交媒体时间</td><td><span class="tag tag-primary">数值</span></td></tr>
+                                <tr><td>study_hours</td><td>每日学习时间</td><td><span class="tag tag-primary">数值</span></td></tr>
+                                <tr><td>sleep_hours</td><td>每日睡眠时间</td><td><span class="tag tag-primary">数值</span></td></tr>
+                                <tr><td>notifications_per_day</td><td>每日通知数量</td><td><span class="tag tag-primary">数值</span></td></tr>
+                                <tr><td>focus_score</td><td>专注力得分</td><td><span class="tag tag-primary">数值</span></td></tr>
+                                <tr><td>addiction_level</td><td>成瘾程度</td><td><span class="tag tag-secondary">分类</span></td></tr>
+                                <tr><td>productivity_score</td><td>生产力得分</td><td><span class="tag tag-primary">数值</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <div class="card">
+                            <h4 style="color: var(--primary-color); margin-bottom: 1rem;">数据预处理</h4>
+                            <ul class="feature-list">
+                                <li>缺失值检测与处理</li>
+                                <li>异常值检测</li>
+                                <li>数据类型转换</li>
+                                <li>特征工程</li>
+                            </ul>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <span class="tag tag-accent">成瘾程度分级</span>
+                            <span class="tag tag-primary">低(16.1%)</span>
+                            <span class="tag tag-secondary">中(67.2%)</span>
+                            <span class="tag tag-accent">高(16.7%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第4页：描述性统计 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">描述性统计分析</h2>
+                <p class="slide-subtitle">数据集基本特征概览</p>
+
+                <div class="chart-container animate-fade-in-up delay-1">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>统计量</th>
+                                <th>年龄</th>
+                                <th>屏幕时间</th>
+                                <th>社交媒体</th>
+                                <th>学习时间</th>
+                                <th>睡眠时间</th>
+                                <th>通知数</th>
+                                <th>专注力</th>
+                                <th>生产力</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>均值</td>
+                                <td>27.11</td>
+                                <td>6.92h</td>
+                                <td>4.15h</td>
+                                <td>4.07h</td>
+                                <td>6.51h</td>
+                                <td>159.78</td>
+                                <td>96.36</td>
+                                <td>37.61</td>
+                            </tr>
+                            <tr>
+                                <td>标准差</td>
+                                <td>7.20</td>
+                                <td>2.83h</td>
+                                <td>2.13h</td>
+                                <td>2.29h</td>
+                                <td>1.42h</td>
+                                <td>80.23</td>
+                                <td>7.34</td>
+                                <td>27.33</td>
+                            </tr>
+                            <tr>
+                                <td>最小值</td>
+                                <td>15</td>
+                                <td>2.0h</td>
+                                <td>0.66h</td>
+                                <td>0.0h</td>
+                                <td>4.0h</td>
+                                <td>20</td>
+                                <td>47.39</td>
+                                <td>0.0</td>
+                            </tr>
+                            <tr>
+                                <td>最大值</td>
+                                <td>39</td>
+                                <td>11.99h</td>
+                                <td>10.66h</td>
+                                <td>8.0h</td>
+                                <td>9.0h</td>
+                                <td>299</td>
+                                <td>100.0</td>
+                                <td>100.0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="grid-3 animate-fade-in-up delay-2">
+                    <div class="card">
+                        <h4 style="color: var(--primary-color);">年龄分布</h4>
+                        <p style="color: var(--text-secondary);">范围17-40岁，主要集中在青年群体</p>
+                    </div>
+                    <div class="card">
+                        <h4 style="color: var(--secondary-color);">屏幕时间</h4>
+                        <p style="color: var(--text-secondary);">日均约6.92小时，呈近似正态分布</p>
+                    </div>
+                    <div class="card">
+                        <h4 style="color: var(--accent-color);">睡眠情况</h4>
+                        <p style="color: var(--text-secondary);">日均约6.51小时，接近推荐睡眠时长</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第5页：数值变量分布 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">数值变量分布</h2>
+                <p class="slide-subtitle">各变量分布直方图分析</p>
+
+                <div class="chart-container animate-fade-in-up delay-1">
+                    <img src="./img/01_numeric_distribution.png" alt="数值变量分布图">
+                </div>
+
+                <div class="conclusion-box animate-fade-in-up delay-2">
+                    <h4>关键发现</h4>
+                    <p><span class="positive-text">年龄分布</span>呈右偏分布，集中在20-35岁区间；<span class="positive-text">屏幕时间</span>近似正态分布，峰值在6-8小时；<span class="positive-text">专注力得分</span>集中在80-100分高分区域，表明样本整体专注力水平较高。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第6页：成瘾程度分布 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">成瘾程度分布</h2>
+                <p class="slide-subtitle">社交媒体成瘾水平的样本分布</p>
+
+                <div class="two-column animate-fade-in-up delay-1">
+                    <div>
+                        <div class="chart-container">
+                            <img src="./img/02_addiction_distribution.png" alt="成瘾程度分布图">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <h4 style="color: var(--primary-color);">低度成瘾 (Low)</h4>
+                            <div class="progress-section">
+                                <div class="progress-bar">
+                                    <div class="progress-fill progress-primary" style="width: 16.1%;"></div>
+                                </div>
+                                <div class="label"><span>占比</span><span>16.1%</span></div>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-top: 0.5rem;">社交媒体使用时间少，生活工作平衡良好</p>
+                        </div>
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <h4 style="color: var(--secondary-color);">中度成瘾 (Medium)</h4>
+                            <div class="progress-section">
+                                <div class="progress-bar">
+                                    <div class="progress-fill progress-secondary" style="width: 67.2%;"></div>
+                                </div>
+                                <div class="label"><span>占比</span><span>67.2%</span></div>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-top: 0.5rem;">样本主体，需关注向高度成瘾转化的风险</p>
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--accent-color);">高度成瘾 (High)</h4>
+                            <div class="progress-section">
+                                <div class="progress-bar">
+                                    <div class="progress-fill progress-accent" style="width: 16.7%;"></div>
+                                </div>
+                                <div class="label"><span>占比</span><span>16.7%</span></div>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-top: 0.5rem;">需要干预和引导，改变使用习惯</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第7页：相关性分析 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">相关性分析</h2>
+                <p class="slide-subtitle">各变量之间的Pearson相关系数</p>
+
+                <div class="two-column animate-fade-in-up delay-1">
+                    <div>
+                        <div class="chart-container">
+                            <img src="./img/03_correlation_heatmap.png" alt="相关性热力图">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <div class="insight-item">
+                                <div class="insight-icon negative">
+                                    <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                </div>
+                                <div>
+                                    <h4 style="color: var(--accent-color);">社交媒体 vs 生产力: <strong>-0.40</strong></h4>
+                                    <p style="color: var(--text-secondary);">中等负相关，使用时间越多，生产力越低</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <div class="insight-item">
+                                <div class="insight-icon positive">
+                                    <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                </div>
+                                <div>
+                                    <h4 style="color: var(--primary-color);">学习时间 vs 生产力: <strong>+0.54</strong></h4>
+                                    <p style="color: var(--text-secondary);">强正相关，学习时间越长生产力越高</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="insight-item">
+                                <div class="insight-icon positive">
+                                    <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                </div>
+                                <div>
+                                    <h4 style="color: var(--primary-color);">专注力 vs 生产力: <strong>+0.59</strong></h4>
+                                    <p style="color: var(--text-secondary);">强正相关，专注力越高生产力越高</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第8页：散点图分析 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">关键变量与生产力关系</h2>
+                <p class="slide-subtitle">六大因素对生产力的影响可视化</p>
+
+                <div class="chart-container animate-fade-in-up delay-1">
+                    <img src="./img/04_scatter_analysis.png" alt="散点图分析">
+                </div>
+
+                <div class="conclusion-box animate-fade-in-up delay-2">
+                    <h4>核心结论</h4>
+                    <p><span class="negative-text">社交媒体使用</span>是生产力的重要负面因素，高成瘾者（红色点）集中在低生产力区域；而<span class="positive-text">学习时间和专注力</span>是最重要的正向预测因子，呈明显的正向趋势。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第9页：成瘾程度特征对比 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">不同成瘾程度的特征对比</h2>
+                <p class="slide-subtitle">各成瘾水平群体的关键指标差异</p>
+
+                <div class="chart-container animate-fade-in-up delay-1">
+                    <img src="./img/05_addiction_comparison.png" alt="成瘾程度对比">
+                </div>
+
+                <div class="grid-3 animate-fade-in-up delay-2">
+                    <div class="card">
+                        <h4 style="color: var(--accent-color);">社交媒体时间</h4>
+                        <p style="color: var(--text-secondary);">Low: 2.1h → Medium: 3.5h → High: 5.8h</p>
+                        <p style="color: var(--text-secondary);">成瘾越高，使用时间越多</p>
+                    </div>
+                    <div class="card">
+                        <h4 style="color: var(--primary-color);">生产力得分</h4>
+                        <p style="color: var(--text-secondary);">Low: 68.5 → Medium: 43.8 → High: 12.6</p>
+                        <p style="color: var(--text-secondary);">高成瘾者生产力仅为低成瘾者18%</p>
+                    </div>
+                    <div class="card">
+                        <h4 style="color: var(--secondary-color);">学习时间</h4>
+                        <p style="color: var(--text-secondary);">Low: 5.4h → Medium: 3.6h → High: 1.8h</p>
+                        <p style="color: var(--text-secondary);">成瘾越高，学习时间越少</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第10页：箱线图分析 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">箱线图分析</h2>
+                <p class="slide-subtitle">社交媒体使用与生产力的分布特征</p>
+
+                <div class="chart-container animate-fade-in-up delay-1">
+                    <img src="./img/06_boxplot_analysis.png" alt="箱线图分析">
+                </div>
+
+                <div class="two-column animate-fade-in-up delay-2">
+                    <div class="conclusion-box">
+                        <h4>社交媒体使用时长</h4>
+                        <p>社交媒体使用超过<span class="highlight-text">4小时/天</span>，生产力急剧下降。0-2小时组生产力中位数约65分，6小时以上组仅约10分。</p>
+                    </div>
+                    <div class="conclusion-box">
+                        <h4>成瘾程度</h4>
+                        <p>High组成绩显著低于其他组，生产力中位数约<span class="highlight-text">5分</span>。Low组中位数约75分，差异达15倍。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第11页：专注力与年龄分析 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">专注力与年龄分析</h2>
+                <p class="slide-subtitle">专注力得分分布和年龄与生产力的关系</p>
+
+                <div class="chart-container animate-fade-in-up delay-1">
+                    <img src="./img/07_focus_age_analysis.png" alt="专注力与年龄分析">
+                </div>
+
+                <div class="grid-2 animate-fade-in-up delay-2">
+                    <div class="card">
+                        <h4 style="color: var(--primary-color);">专注力分布</h4>
+                        <ul class="feature-list">
+                            <li>Low成瘾者：专注力普遍在90-100分</li>
+                            <li>High成瘾者：分布明显左偏，专注力普遍较低</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4 style="color: var(--secondary-color);">年龄因素</h4>
+                        <ul class="feature-list">
+                            <li>年龄与生产力没有明显的线性关系</li>
+                            <li>干预措施应重点关注降低社交媒体成瘾程度</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第12页：回归模型结果 -->
+        <div class="slide slide-compact">
+            <div class="slide-content">
+                <h2 class="slide-title">回归模型结果</h2>
+                <p class="slide-subtitle">预测生产力得分的多种机器学习模型对比</p>
+
+                <div class="chart-container chart-sm animate-fade-in-up delay-1">
+                    <img src="./img/08_regression_comparison.png" alt="回归模型对比">
+                </div>
+
+                <div class="model-comparison table-sm animate-fade-in-up delay-2">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>模型</th>
+                                <th>RMSE ↓</th>
+                                <th>MAE ↓</th>
+                                <th>R² ↑</th>
+                                <th>交叉验证R²</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="highlight">
+                                <td class="best">随机森林回归</td>
+                                <td class="best">10.87</td>
+                                <td class="best">8.13</td>
+                                <td class="best">0.840</td>
+                                <td>0.841 ± 0.008</td>
+                            </tr>
+                            <tr>
+                                <td>梯度提升回归</td>
+                                <td>10.91</td>
+                                <td>8.14</td>
+                                <td>0.838</td>
+                                <td>0.843 ± 0.005</td>
+                            </tr>
+                            <tr>
+                                <td>Lasso回归</td>
+                                <td>11.13</td>
+                                <td>8.52</td>
+                                <td>0.832</td>
+                                <td>0.838 ± 0.006</td>
+                            </tr>
+                            <tr>
+                                <td>岭回归</td>
+                                <td>11.17</td>
+                                <td>8.51</td>
+                                <td>0.831</td>
+                                <td>0.839 ± 0.006</td>
+                            </tr>
+                            <tr>
+                                <td>线性回归</td>
+                                <td>11.17</td>
+                                <td>8.51</td>
+                                <td>0.831</td>
+                                <td>0.839 ± 0.006</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第13页：分类模型对比 -->
+        <div class="slide slide-compact">
+            <div class="slide-content">
+                <h2 class="slide-title">分类模型结果</h2>
+                <p class="slide-subtitle">预测成瘾程度的多分类模型性能对比</p>
+
+                <div class="chart-container chart-sm animate-fade-in-up delay-1">
+                    <img src="./img/09_classification_comparison.png" alt="分类模型对比">
+                </div>
+
+                <div class="model-comparison table-sm animate-fade-in-up delay-2">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>模型</th>
+                                <th>准确率</th>
+                                <th>精确率</th>
+                                <th>召回率</th>
+                                <th>F1分数</th>
+                                <th>AUC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="highlight">
+                                <td class="best">梯度提升</td>
+                                <td class="best">99.08%</td>
+                                <td class="best">99.10%</td>
+                                <td class="best">99.08%</td>
+                                <td class="best">99.09%</td>
+                                <td class="best">0.995</td>
+                            </tr>
+                            <tr>
+                                <td>随机森林</td>
+                                <td>98.92%</td>
+                                <td>98.92%</td>
+                                <td>98.92%</td>
+                                <td>98.92%</td>
+                                <td>0.995</td>
+                            </tr>
+                            <tr>
+                                <td>决策树</td>
+                                <td>98.08%</td>
+                                <td>98.09%</td>
+                                <td>98.08%</td>
+                                <td>98.08%</td>
+                                <td>0.987</td>
+                            </tr>
+                            <tr>
+                                <td>支持向量机</td>
+                                <td>96.25%</td>
+                                <td>96.30%</td>
+                                <td>96.25%</td>
+                                <td>96.24%</td>
+                                <td>0.992</td>
+                            </tr>
+                            <tr>
+                                <td>逻辑回归</td>
+                                <td>96.50%</td>
+                                <td>96.51%</td>
+                                <td>96.50%</td>
+                                <td>96.50%</td>
+                                <td>0.990</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第14页：混淆矩阵 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">混淆矩阵分析</h2>
+                <p class="slide-subtitle">梯度提升分类器的预测效果可视化</p>
+
+                <div class="two-column animate-fade-in-up delay-1">
+                    <div>
+                        <div class="chart-container">
+                            <img src="./img/10_confusion_matrix.png" alt="混淆矩阵">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <h4 style="color: var(--primary-color);">模型性能解读</h4>
+                            <p style="color: var(--text-secondary);">梯度提升分类器在三个类别上的预测准确率均超过98%，展现了优秀的分类能力。</p>
+                        </div>
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <h4 style="color: var(--secondary-color);">Low类别</h4>
+                            <p style="color: var(--text-secondary);">正确预测高成瘾样本，极少误判</p>
+                        </div>
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <h4 style="color: var(--accent-color);">Medium类别</h4>
+                            <p style="color: var(--text-secondary);">主体类别，预测准确率最高</p>
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--primary-color);">High类别</h4>
+                            <p style="color: var(--text-secondary);">关键识别目标，准确率超过99%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第15页：ROC曲线 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">ROC曲线分析</h2>
+                <p class="slide-subtitle">各模型的区分能力评估</p>
+
+                <div class="two-column animate-fade-in-up delay-1">
+                    <div>
+                        <div class="chart-container">
+                            <img src="./img/11_roc_curves.png" alt="ROC曲线">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <h4 style="color: var(--primary-color);">ROC-AUC指标</h4>
+                            <p style="color: var(--text-secondary);">ROC曲线越靠近左上角，模型区分能力越强。AUC值接近1表示完美分类器。</p>
+                        </div>
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <div class="insight-item">
+                                <div class="insight-icon positive">1</div>
+                                <div>
+                                    <h4 style="color: var(--primary-color);">梯度提升</h4>
+                                    <p style="color: var(--text-secondary);">AUC = 0.995</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <div class="insight-item">
+                                <div class="insight-icon positive">2</div>
+                                <div>
+                                    <h4 style="color: var(--secondary-color);">随机森林</h4>
+                                    <p style="color: var(--text-secondary);">AUC = 0.995</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="insight-item">
+                                <div class="insight-icon neutral">3</div>
+                                <div>
+                                    <h4 style="color: var(--accent-color);">逻辑回归</h4>
+                                    <p style="color: var(--text-secondary);">AUC = 0.990</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第16页：特征重要性 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">特征重要性分析</h2>
+                <p class="slide-subtitle">影响成瘾程度预测的关键因素</p>
+
+                <div class="two-column animate-fade-in-up delay-1">
+                    <div>
+                        <div class="chart-container">
+                            <img src="./img/12_feature_importance.png" alt="特征重要性">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <h4 style="color: var(--accent-color);">社交媒体时间 (最重要)</h4>
+                            <p style="color: var(--text-secondary);">是预测成瘾程度最关键的因素，直接反映使用习惯</p>
+                        </div>
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <h4 style="color: var(--primary-color);">屏幕使用时间</h4>
+                            <p style="color: var(--text-secondary);">第二大影响因素，与社交媒体使用高度相关</p>
+                        </div>
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <h4 style="color: var(--secondary-color);">通知数量</h4>
+                            <p style="color: var(--text-secondary);">反映社交媒体活跃度，也是重要的预测因子</p>
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--text-secondary);">专注力得分</h4>
+                            <p style="color: var(--text-secondary);">与成瘾程度呈负相关，可作为辅助判断指标</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第17页：总结与建议 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title">总结与建议</h2>
+                <p class="slide-subtitle">研究发现与实践建议</p>
+
+                <div class="grid-2 animate-fade-in-up delay-1">
+                    <div>
+                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">主要发现</h3>
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <div class="insight-item">
+                                <div class="insight-icon negative">1</div>
+                                <div>
+                                    <h4>社交媒体是生产力的"杀手"</h4>
+                                    <p style="color: var(--text-secondary);">每增加1小时社交媒体使用，生产力平均下降约5分</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <div class="insight-item">
+                                <div class="insight-icon positive">2</div>
+                                <div>
+                                    <h4>学习时间是生产力的"助推器"</h4>
+                                    <p style="color: var(--text-secondary);">学习时间与生产力呈强正相关(r=0.54)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="insight-item">
+                                <div class="insight-icon positive">3</div>
+                                <div>
+                                    <h4>专注力是核心竞争优势</h4>
+                                    <p style="color: var(--text-secondary);">专注力得分与生产力相关性最高(r=0.59)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="color: var(--secondary-color); margin-bottom: 1rem;">实践建议</h3>
+                        <div class="recommendation-card" style="margin-bottom: 1rem;">
+                            <h4>
+                                <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                设定使用时限
+                            </h4>
+                            <p>将每日社交媒体使用控制在2小时以内，避免超过4小时的"生产力悬崖"</p>
+                        </div>
+                        <div class="recommendation-card" style="margin-bottom: 1rem;">
+                            <h4>
+                                <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                培养专注习惯
+                            </h4>
+                            <p>使用番茄工作法，减少通知干扰，提升深度工作时间</p>
+                        </div>
+                        <div class="recommendation-card" style="margin-bottom: 1rem;">
+                            <h4>
+                                <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                增加学习投入
+                            </h4>
+                            <p>每天保证4小时以上的专注学习时间，持续提升专业能力</p>
+                        </div>
+                        <div class="recommendation-card">
+                            <h4>
+                                <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                关注成瘾信号
+                            </h4>
+                            <p>定期自评成瘾程度，警惕从Medium向High的转化</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第18页：感谢页 -->
+        <div class="slide cover-slide">
+            <div class="slide-content">
+                <h1 class="slide-title animate-fade-in-up">感谢观看</h1>
+                <p class="slide-subtitle animate-fade-in-up delay-1">MM5412 小组项目 - 社交媒体使用对生产力影响分析</p>
+                <div class="cover-meta animate-fade-in-up delay-2">
+                    <span>
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                        MM5412Group@example.edu
+                    </span>
+                    <span>
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                        MM5412 小组
+                    </span>
+                </div>
+                <div class="animate-fade-in-up delay-3" style="margin-top: 2rem;">
+                    <span class="tag tag-primary">数据分析</span>
+                    <span class="tag tag-secondary">机器学习</span>
+                    <span class="tag tag-accent">可视化</span>
+                </div>
+            </div>
+    </div>
+
+    <!-- 导航箭头 -->
+    <div class="nav-arrows">
+        <button class="nav-arrow prev-arrow" aria-label="上一页">
+            <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <button class="nav-arrow next-arrow" aria-label="下一页">
+            <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+    </div>
+
+    <!-- 页码指示器 -->
+    <div class="page-indicator">
+        <span class="current-page">1</span>
+        <span class="page-divider"></span>
+        <span class="total-pages">18</span>
+    </div>
+
+    <!-- 键盘提示 -->
+    <div class="keyboard-hint">
+        <span>使用</span>
+        <span class="key">←</span>
+        <span class="key">→</span>
+        <span>或</span>
+        <span class="key">空格</span>
+        <span>键翻页</span>
+    </div>
+
+    <script src="./JavaScript/slides.js"></script>
+</body>
+</html>
