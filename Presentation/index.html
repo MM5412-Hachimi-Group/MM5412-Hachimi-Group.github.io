@@ -1038,9 +1038,9 @@
             <div style="margin-top:14px;" class="card">
               <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;font-weight:600;">📊 6因子加权评分体系</div>
               <div style="font-family:monospace;font-size:11px;color:var(--accent-green);line-height:1.8;background:rgba(0,0,0,0.3);padding:10px;border-radius:6px;">
-                风险分 = (登录间隔/60)×0.35 + (1-观看频次/21)×0.20<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + (1-完播率/100)×0.18 + (1-平均时长/350)×0.12<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + (1-推荐点击率/100)×0.08 + (1-账龄/48)×0.07<br><br>
+                风险分 = (订阅类型/3)×0.35 + (付款方式/4)×0.20<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + (主设备/6)×0.18 + (已用设备/3)×0.12<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + (最爱视频类型/5)×0.08 + (追剧次数/15)×0.07<br><br>
                 流失阈值：80th百分位（约20%流失率）<br>
                 添加35%随机噪声模拟真实隐性因素
               </div>
@@ -1120,10 +1120,8 @@
             <div style="background:#1e1e1e;border-radius:8px;padding:14px;font-family:'Fira Code','Consolas',monospace;font-size:11px;line-height:1.6;color:#d4d4d4;overflow-x:auto;border:1px solid rgba(255,255,255,0.1);">
               <div style="color:#6a9955;"># 业务逻辑流失概率计算</div>
               <div style="color:#c586c0;">def</span> <span style="color:#dcdcaa;">compute_churn_prob</span>(<span style="color:#9cdcfe;">row</span>):</div>
-              <div style="padding-left:12px;color:#9cdcfe;">s</span> = (row['days_since_last_login'] / <span style="color:#b5cea8;">60.0</span>) * <span style="color:#b5cea8;">0.35</span></div>
-              <div style="padding-left:12px;">s += (<span style="color:#b5cea8;">1</span> - row['watch_sessions_per_week'] / <span style="color:#b5cea8;">21.0</span>) * <span style="color:#b5cea8;">0.20</span></div>
-              <div style="padding-left:12px;">s += (<span style="color:#b5cea8;">1</span> - row['completion_rate'] / <span style="color:#b5cea8;">100.0</span>) * <span style="color:#b5cea8;">0.18</span></div>
-              <div style="padding-left:12px;">s += (<span style="color:#b5cea8;">1</span> - row['avg_watch_time_minutes'] / <span style="color:#b5cea8;">350.0</span>) * <span style="color:#b5cea8;">0.12</span></div>
+              <div style="padding-left:12px;color:#9cdcfe;">s</span> = (row['subscription_type'] / <span style="color:#b5cea8;">3.0</span>) * <span style="color:#b5cea8;">0.35</span></div>
+              <div style="padding-left:12px;">s += (<span style="color:#b5cea8;">1</span> - row['payment_method'] / <span style="color:#b5cea8;">4.0</span>) * <span style="color:#b5cea8;">0.20</span></div>
               <div style="padding-left:12px;">...</div>
               <div style="padding-left:12px;color:#c586c0;">return</span> <span style="color:#b5cea8;">1.0</span> / (<span style="color:#b5cea8;">1.0</span> + np.exp(<span style="color:#b5cea8;">-8.0</span> * (s - <span style="color:#b5cea8;">0.5</span>)))</div>
               <br/>
