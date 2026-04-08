@@ -1125,7 +1125,7 @@
               <div style="padding-left:12px;">...</div>
               <div style="padding-left:12px;color:#c586c0;">return</span> <span style="color:#b5cea8;">1.0</span> / (<span style="color:#b5cea8;">1.0</span> + np.exp(<span style="color:#b5cea8;">-8.0</span> * (s - <span style="color:#b5cea8;">0.5</span>)))</div>
               <br/>
-              <div style="color:#6a9955;"># 添加35%随机噪声，模拟真实隐性因素</div>
+              <div style="color:#6a9955;"># 添加35%随机噪声，模拟真实的隐性因素</div>
               <div style="color:#9cdcfe;">noise</span> = np.random.uniform(<span style="color:#b5cea8;">0</span>, <span style="color:#b5cea8;">1</span>, len(df_raw))</div>
               <div style="color:#9cdcfe;">noisy_score</span> = <span style="color:#b5cea8;">0.65</span> * risk_scores + <span style="color:#b5cea8;">0.35</span> * noise</div>
               <br/>
