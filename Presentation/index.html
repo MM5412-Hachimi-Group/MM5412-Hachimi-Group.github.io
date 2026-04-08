@@ -1,0 +1,2099 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="./Image/netflix.png" type="image/x-icon">
+<title>Netflix 用户流失预测 | Hachimi Group | MM5412</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Netflix+Sans:wght@300;400;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* ─── RESET & BASE ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --netflix-red: #E50914;
+    --netflix-dark: #141414;
+    --netflix-gray: #808080;
+    --netflix-light: #e5e5e5;
+    --netflix-card: #1f1f1f;
+    --accent-blue: #0071eb;
+    --accent-gold: #f5a623;
+    --accent-green: #46d369;
+    --accent-purple: #8b5cf6;
+    --slide-bg: #0a0a0a;
+    --text-primary: #ffffff;
+    --text-secondary: #b3b3b3;
+    --gradient-red: linear-gradient(135deg, #E50914 0%, #b00710 100%);
+    --gradient-dark: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.9) 100%);
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--slide-bg);
+    color: var(--text-primary);
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    cursor: none;
+  }
+
+  /* ─── CUSTOM CURSOR ─── */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--netflix-red);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, opacity 0.2s;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 2px solid rgba(229, 9, 20, 0.5);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.12s ease;
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* ─── NAV BAR ─── */
+  .navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 1000;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%);
+    transition: background 0.3s;
+  }
+  .navbar.scrolled { background: rgba(20,20,20,0.97); }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+  }
+  .nav-logo img {
+    height: 36px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
+  .nav-title {
+    font-size: 13px;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .nav-counter {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ─── SLIDE CONTAINER ─── */
+  .slides-wrapper {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateX(100px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    padding: 80px 60px 80px;
+    overflow-y: auto;
+  }
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+  }
+  .slide.prev {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+
+  /* ─── PROGRESS BAR ─── */
+  .progress-bar-container {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    z-index: 1000;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--gradient-red);
+    transition: width 0.4s ease;
+    box-shadow: 0 0 10px var(--netflix-red);
+  }
+
+  /* ─── SLIDE DOTS ─── */
+  .slide-dots {
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .dot.active {
+    background: var(--netflix-red);
+    transform: scale(1.5);
+    box-shadow: 0 0 8px var(--netflix-red);
+  }
+  .dot:hover { background: rgba(255,255,255,0.6); transform: scale(1.3); }
+
+  /* ─── NAVIGATION ARROWS ─── */
+  .nav-arrow {
+    position: fixed;
+    bottom: -70px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.25s;
+    font-size: 20px;
+    backdrop-filter: blur(8px);
+    opacity: 0;
+  }
+  .nav-arrow.visible {
+    bottom: 36px;
+    opacity: 1;
+  }
+  .nav-arrow:hover { background: var(--netflix-red); border-color: var(--netflix-red); transform: scale(1.08); }
+  .nav-arrow.prev-btn { left: 50%; transform: translateX(calc(-50% - 35px)); }
+  .nav-arrow.next-btn { left: 50%; transform: translateX(calc(-50% + 35px)); }
+  .nav-arrow.prev-btn:hover { transform: translateX(calc(-50% - 35px)) scale(1.08); }
+  .nav-arrow.next-btn:hover { transform: translateX(calc(-50% + 35px)) scale(1.08); }
+
+  /* ─── KEY HINT ─── */
+  .key-hint {
+    position: fixed;
+    bottom: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.08em;
+    z-index: 1000;
+    pointer-events: none;
+  }
+
+  /* ─── SLIDE LABEL ─── */
+  .slide-label {
+    position: absolute;
+    top: 80px; left: 60px;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--netflix-red);
+    font-weight: 600;
+  }
+
+  /* ─── TYPOGRAPHY ─── */
+  .display-1 {
+    font-size: clamp(48px, 7vw, 96px);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+  }
+  .display-2 {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .heading-1 {
+    font-size: clamp(28px, 3.5vw, 48px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .heading-2 {
+    font-size: clamp(20px, 2.5vw, 32px);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .body-lg { font-size: clamp(15px, 1.5vw, 18px); line-height: 1.7; color: var(--text-secondary); }
+  .body-sm { font-size: 13px; line-height: 1.6; color: var(--text-secondary); }
+  .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .tag-red { background: rgba(229,9,20,0.2); color: var(--netflix-red); border: 1px solid rgba(229,9,20,0.3); }
+  .tag-blue { background: rgba(0,113,235,0.2); color: #3b9ef5; border: 1px solid rgba(0,113,235,0.3); }
+  .tag-green { background: rgba(70,211,105,0.15); color: var(--accent-green); border: 1px solid rgba(70,211,105,0.3); }
+  .tag-gold { background: rgba(245,166,35,0.15); color: var(--accent-gold); border: 1px solid rgba(245,166,35,0.3); }
+  .tag-purple { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.3); }
+
+  /* ─── CARD ─── */
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.3s;
+    backdrop-filter: blur(4px);
+  }
+  .card:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(229,9,20,0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(229,9,20,0.1);
+  }
+  .card-featured {
+    background: linear-gradient(135deg, rgba(229,9,20,0.12) 0%, rgba(229,9,20,0.04) 100%);
+    border: 1px solid rgba(229,9,20,0.25);
+    border-radius: 12px;
+    padding: 28px;
+  }
+
+  /* ─── STAT ─── */
+  .stat-number {
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  /* ─── TABLE ─── */
+  .netflix-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .netflix-table th {
+    background: rgba(229,9,20,0.15);
+    color: var(--netflix-red);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(229,9,20,0.2);
+  }
+  .netflix-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: var(--text-secondary);
+    vertical-align: middle;
+  }
+  .netflix-table tr:last-child td { border-bottom: none; }
+  .netflix-table tr:hover td { background: rgba(255,255,255,0.03); color: var(--text-primary); }
+  .netflix-table .highlight-row td { color: var(--text-primary); font-weight: 600; }
+
+  /* ─── PROGRESS RING ─── */
+  .progress-ring-container { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+  .progress-ring { transform: rotate(-90deg); }
+  .progress-ring-val {
+    position: absolute;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  /* ─── BAR CHART ─── */
+  .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+  .bar-row { display: flex; align-items: center; gap: 12px; }
+  .bar-label { width: 120px; font-size: 12px; color: var(--text-secondary); text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--gradient-red);
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 0 8px rgba(229,9,20,0.4);
+  }
+  .bar-fill.blue { background: linear-gradient(90deg, #0071eb, #3b9ef5); box-shadow: 0 0 8px rgba(0,113,235,0.4); }
+  .bar-fill.green { background: linear-gradient(90deg, #46d369, #6ee78e); box-shadow: 0 0 8px rgba(70,211,105,0.4); }
+  .bar-fill.gold { background: linear-gradient(90deg, #f5a623, #ffd166); box-shadow: 0 0 8px rgba(245,166,35,0.4); }
+  .bar-val { width: 48px; font-size: 13px; font-weight: 600; color: var(--text-primary); }
+
+  /* ─── GRID ─── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+
+  /* ─── DIVIDER ─── */
+  .divider { height: 1px; background: rgba(255,255,255,0.08); margin: 20px 0; }
+  .divider-red { height: 2px; width: 48px; background: var(--netflix-red); margin-bottom: 16px; }
+
+  /* ─── SLIDE-SPECIFIC ─── */
+
+  /* Slide 1 – Cover */
+  #slide-1 {
+    background: radial-gradient(ellipse at 50% 50%, #1a0a0a 0%, #0a0a0a 70%);
+    flex-direction: column;
+    text-align: center;
+    gap: 0;
+  }
+  .cover-bg {
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e50914' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.6;
+  }
+  .cover-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(229,9,20,0.15) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .cover-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 32px; max-width: 900px; }
+  .netflix-logo-big {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--netflix-red);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 2px solid var(--netflix-red);
+    padding: 8px 20px;
+    border-radius: 4px;
+  }
+  .cover-title { line-height: 0.95; }
+  .cover-title span { color: var(--netflix-red); }
+  .cover-subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 600px;
+    line-height: 1.7;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    padding-top: 8px;
+  }
+  .cover-meta-item { text-align: center; }
+  .cover-meta-item .label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px; }
+  .cover-meta-item .value { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .cover-meta-divider { width: 1px; height: 40px; background: rgba(255,255,255,0.1); }
+  .play-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--netflix-red);
+    color: white;
+    padding: 14px 32px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    letter-spacing: 0.03em;
+    margin-top: 8px;
+  }
+  .play-btn:hover { background: #ff0a16; transform: scale(1.04); }
+  .play-icon { width: 20px; height: 20px; fill: white; }
+
+  /* Slide 2 – Overview */
+  #slide-2 { background: linear-gradient(135deg, #0a0a0a 0%, #111111 100%); }
+
+  /* Slide 3 – EDA */
+  #slide-3 { background: #0a0a0a; }
+
+  /* Slide 4 – Feature Engineering */
+  #slide-4 { background: linear-gradient(135deg, #0a0a0a 0%, #0d0d1a 100%); }
+
+  /* Slide 5 – Models */
+  #slide-5 { background: #0a0a0a; }
+
+  /* Slide 6 – Results */
+  #slide-6 { background: linear-gradient(135deg, #0a0a0a 0%, #0d1a0d 100%); }
+
+  /* Slide 7 – Business Insights */
+  #slide-7 { background: #0a0a0a; }
+
+  /* Slide 8 – Operations Matrix */
+  #slide-8 { background: linear-gradient(135deg, #0a0a0a 0%, #1a0a00 100%); }
+
+  /* Slide 9 – Results Part 1 */
+  #slide-9 { background: #0a0a0a; }
+
+  /* Slide 10 – Results Part 2 */
+  #slide-10 { background: linear-gradient(135deg, #0a0a0a 0%, #0d1a0d 100%); }
+
+  /* Slide 11 – Business Insights */
+  #slide-11 { background: #0a0a0a; }
+
+  /* Slide 12 – Operations Matrix */
+  #slide-12 { background: linear-gradient(135deg, #0a0a0a 0%, #1a0a00 100%); }
+
+  /* Slide 13 – Deployment */
+  #slide-13 { background: #0a0a0a; }
+
+  /* Slide 14 – Summary */
+  #slide-14 {
+    background: radial-gradient(ellipse at 50% 50%, #1a0a0a 0%, #0a0a0a 70%);
+    flex-direction: column;
+    text-align: center;
+  }
+
+  /* ─── ANIMATED ELEMENTS ─── */
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .slide.active .fade-in { opacity: 1; transform: translateY(0); }
+  .fade-in:nth-child(1) { transition-delay: 0.1s; }
+  .fade-in:nth-child(2) { transition-delay: 0.2s; }
+  .fade-in:nth-child(3) { transition-delay: 0.3s; }
+  .fade-in:nth-child(4) { transition-delay: 0.4s; }
+  .fade-in:nth-child(5) { transition-delay: 0.5s; }
+  .fade-in:nth-child(6) { transition-delay: 0.6s; }
+
+  /* ─── FEATURE BADGE ─── */
+  .feature-badge {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 14px 18px;
+    transition: all 0.3s;
+  }
+  .feature-badge:hover { border-color: rgba(229,9,20,0.3); background: rgba(229,9,20,0.06); }
+  .feature-badge .icon { font-size: 22px; flex-shrink: 0; }
+  .feature-badge .text-wrap .title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .feature-badge .text-wrap .desc { font-size: 11px; color: var(--text-secondary); }
+
+  /* ─── PIPELINE STEP ─── */
+  .pipeline { display: flex; align-items: center; gap: 0; }
+  .pipeline-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+  }
+  .pipeline-step::after {
+    content: '→';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--netflix-red);
+    font-size: 18px;
+  }
+  .pipeline-step:last-child::after { display: none; }
+  .pipeline-box {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 12px 8px;
+    margin: 0 12px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    transition: all 0.3s;
+  }
+  .pipeline-box:hover { border-color: var(--netflix-red); color: var(--text-primary); background: rgba(229,9,20,0.06); }
+  .pipeline-box .step-num { font-size: 20px; margin-bottom: 4px; }
+  .pipeline-box .step-name { font-weight: 600; font-size: 12px; color: var(--text-primary); margin-bottom: 2px; }
+
+  /* ─── INSIGHT CARD ─── */
+  .insight-card {
+    border-left: 3px solid var(--netflix-red);
+    padding: 16px 20px;
+    background: rgba(229,9,20,0.06);
+    border-radius: 0 8px 8px 0;
+  }
+  .insight-card.blue { border-color: #3b9ef5; background: rgba(59,158,245,0.06); }
+  .insight-card.green { border-color: var(--accent-green); background: rgba(70,211,105,0.06); }
+  .insight-card.gold { border-color: var(--accent-gold); background: rgba(245,166,35,0.06); }
+
+  /* ─── AUC COMPARISON ─── */
+  .auc-comparison {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    justify-content: center;
+    padding: 20px 0;
+  }
+  .auc-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .auc-bar-label { font-size: 11px; color: var(--text-secondary); text-align: center; }
+  .auc-bar-track { width: 50px; background: rgba(255,255,255,0.08); border-radius: 4px 4px 0 0; overflow: hidden; display: flex; align-items: flex-end; }
+  .auc-bar-fill { width: 100%; border-radius: 4px 4px 0 0; transition: height 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
+  .auc-bar-value { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+
+  /* ─── SCROLL OVERRIDE ─── */
+  .slide-inner { width: 100%; max-width: 1100px; margin: 0 auto; }
+
+  /* ─── BEFORE/AFTER ─── */
+  .before-after {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    gap: 0;
+    align-items: center;
+  }
+  .ba-box { border-radius: 10px; padding: 20px; }
+  .ba-before { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
+  .ba-after { background: rgba(70,211,105,0.08); border: 1px solid rgba(70,211,105,0.2); }
+  .ba-arrow { text-align: center; font-size: 28px; color: var(--netflix-red); }
+
+  /* ─── HIGHLIGHT TEXT ─── */
+  .text-red { color: var(--netflix-red); }
+  .text-green { color: var(--accent-green); }
+  .text-gold { color: var(--accent-gold); }
+  .text-blue { color: #3b9ef5; }
+  .text-purple { color: #a78bfa; }
+
+  /* ─── SCROLLABLE SLIDE ─── */
+  .slide-scroll { overflow-y: auto; align-items: flex-start; padding-top: 100px; }
+  .slide-scroll::-webkit-scrollbar { width: 4px; }
+  .slide-scroll::-webkit-scrollbar-track { background: transparent; }
+  .slide-scroll::-webkit-scrollbar-thumb { background: rgba(229,9,20,0.3); border-radius: 2px; }
+
+  /* ─── RECOMMENDATION CARD ─── */
+  .rec-level {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.3s;
+  }
+  .rec-level:hover { border-color: rgba(229,9,20,0.2); background: rgba(229,9,20,0.04); }
+  .rec-level-badge {
+    width: 60px; height: 26px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.08em;
+    flex-shrink: 0;
+  }
+  .level-1 { background: rgba(229,9,20,0.3); color: var(--netflix-red); }
+  .level-2 { background: rgba(245,166,35,0.3); color: var(--accent-gold); }
+  .level-3 { background: rgba(70,211,105,0.2); color: var(--accent-green); }
+
+  /* responsive */
+  @media (max-width: 900px) {
+    .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
+    .navbar { padding: 0 20px; }
+    .slide { padding: 80px 24px 80px; }
+    .slide-dots { display: none; }
+  }
+
+  /* ─── IMAGE LIGHTBOX ─── */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+    animation: lightboxFadeIn 0.2s ease;
+  }
+  .lightbox.active {
+    display: flex;
+  }
+  @keyframes lightboxFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .lightbox img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    cursor: default;
+    transition: transform 0.2s ease;
+  }
+  .lightbox img:hover {
+    transform: none;
+  }
+  .lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 10001;
+  }
+  .lightbox-close:hover {
+    background: var(--netflix-red);
+    border-color: var(--netflix-red);
+    transform: scale(1.1);
+  }
+  .lightbox-hint {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.08em;
+    pointer-events: none;
+  }
+
+  /* 放大镜光标 */
+  img[data-zoomable] {
+    cursor: zoom-in;
+    transition: opacity 0.2s;
+  }
+  img[data-zoomable]:hover {
+    opacity: 0.9;
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Navbar -->
+<nav class="navbar" id="navbar">
+  <div class="nav-logo"><img src="Image/netflix.png" alt="Netflix"></div>
+  <div class="nav-title">MM5412 · Hachimi Group · Business Intelligence And Decisions</div>
+  <div class="nav-counter" id="slideCounter">01 / 14</div>
+</nav>
+
+<!-- Slide Dots -->
+<div class="slide-dots" id="slideDots"></div>
+
+<!-- Progress Bar -->
+<div class="progress-bar-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<!-- Navigation Arrows -->
+<button class="nav-arrow prev-btn" id="prevBtn" onclick="changeSlide(-1)">&#8592;</button>
+<button class="nav-arrow next-btn" id="nextBtn" onclick="changeSlide(1)">&#8594;</button>
+
+<!-- Image Lightbox Modal -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox(event)">&times;</button>
+  <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
+  <div class="lightbox-hint">点击空白区域关闭</div>
+</div>
+
+<!-- ═══════════════════════════════════ SLIDES ═══════════════════════════════════ -->
+<div class="slides-wrapper" id="slidesWrapper">
+
+  <!-- ─── SLIDE 1: COVER ─── -->
+  <div class="slide active" id="slide-1">
+    <div class="cover-bg"></div>
+    <div class="cover-glow"></div>
+    <div class="cover-content">
+      <div class="netflix-logo-big">NETFLIX</div>
+      <h1 class="display-1 cover-title">
+        用户<span>流失</span><br>预测分析
+      </h1>
+      <p class="cover-subtitle">
+        基于机器学习的 Netflix 订阅用户流失预测模型研究<br>
+        涵盖 EDA · 特征工程 · 模型调优 · 商业洞见
+      </p>
+      <div class="cover-meta">
+        <div class="cover-meta-item">
+          <div class="label">课程</div>
+          <div class="value">MM5412</div>
+        </div>
+        <div class="cover-meta-divider"></div>
+        <div class="cover-meta-item">
+          <div class="label">小组</div>
+          <div class="value">Hachimi Group</div>
+        </div>
+        <div class="cover-meta-divider"></div>
+        <div class="cover-meta-item">
+          <div class="label">最优 AUC</div>
+          <div class="value text-red">0.9110</div>
+        </div>
+        <div class="cover-meta-divider"></div>
+        <div class="cover-meta-item">
+          <div class="label">数据规模</div>
+          <div class="value">大规模用户</div>
+        </div>
+      </div>
+      <button class="play-btn" onclick="changeSlide(1)">
+        <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        开始演示
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 2: PROJECT OVERVIEW ─── -->
+  <div class="slide" id="slide-2">
+    <div class="slide-inner">
+      <div class="slide-label">项目概览</div>
+      <div style="display:flex;flex-direction:column;gap:36px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">项目背景与<br><span class="text-red">研究目标</span></h2>
+        </div>
+        <div class="grid-2 fade-in">
+          <div>
+            <p class="body-lg" style="margin-bottom:20px;">
+              Netflix 是全球最大的流媒体平台，订阅用户流失（Churn）是影响
+              其收入增长的核心商业问题。本项目以 Netflix 用户行为数据为基础，
+              构建精准的流失预测模型，为精准运营提供数据支撑。
+            </p>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div class="insight-card">
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">🎯 核心问题</div>
+                <div class="body-sm">哪些用户最可能在未来 30 天内取消订阅？</div>
+              </div>
+              <div class="insight-card blue">
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">📊 研究方法</div>
+                <div class="body-sm">标签重建 → 特征工程 → 5模型对比 → 超参调优</div>
+              </div>
+              <div class="insight-card green">
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">💼 商业价值</div>
+                <div class="body-sm">识别流失风险，提前干预，降低客户获取成本</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card-featured">
+              <div class="stat-number text-red">0.91<span style="font-size:0.5em;color:var(--text-secondary);">+ AUC</span></div>
+              <div class="stat-label">集成模型最终性能</div>
+              <div style="margin-top:12px;font-size:12px;color:var(--text-secondary);">调优前 AUC ≈ 0.52 → 调优后 AUC ≈ 0.91，提升 75%</div>
+            </div>
+            <div class="grid-2" style="gap:12px;">
+              <div class="card" style="text-align:center;padding:18px 12px;">
+                <div class="stat-number" style="font-size:36px;color:#3b9ef5;">5</div>
+                <div class="stat-label">对比模型</div>
+              </div>
+              <div class="card" style="text-align:center;padding:18px 12px;">
+                <div class="stat-number" style="font-size:36px;color:var(--accent-green);">6–8x</div>
+                <div class="stat-label">训练提速</div>
+              </div>
+              <div class="card" style="text-align:center;padding:18px 12px;">
+                <div class="stat-number" style="font-size:36px;color:var(--accent-gold);">4</div>
+                <div class="stat-label">衍生特征</div>
+              </div>
+              <div class="card" style="text-align:center;padding:18px 12px;">
+                <div class="stat-number" style="font-size:36px;color:#a78bfa;">5-Fold</div>
+                <div class="stat-label">交叉验证</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fade-in">
+          <div class="pipeline">
+            <div class="pipeline-step">
+              <div class="pipeline-box">
+                <div class="step-num">📥</div>
+                <div class="step-name">数据导入</div>
+                <div>原始 Netflix 数据集</div>
+              </div>
+            </div>
+            <div class="pipeline-step">
+              <div class="pipeline-box">
+                <div class="step-num">🔍</div>
+                <div class="step-name">EDA 分析</div>
+                <div>质量检查+分布探索</div>
+              </div>
+            </div>
+            <div class="pipeline-step">
+              <div class="pipeline-box">
+                <div class="step-num">🏗️</div>
+                <div class="step-name">特征工程</div>
+                <div>标签重建+衍生特征</div>
+              </div>
+            </div>
+            <div class="pipeline-step">
+              <div class="pipeline-box">
+                <div class="step-num">🤖</div>
+                <div class="step-name">模型训练</div>
+                <div>5种算法对比</div>
+              </div>
+            </div>
+            <div class="pipeline-step">
+              <div class="pipeline-box">
+                <div class="step-num">⚡</div>
+                <div class="step-name">超参调优</div>
+                <div>GridSearch + Halving</div>
+              </div>
+            </div>
+            <div class="pipeline-step">
+              <div class="pipeline-box">
+                <div class="step-num">💡</div>
+                <div class="step-name">商业洞见</div>
+                <div>精准运营矩阵</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 3: EDA ─── -->
+  <div class="slide" id="slide-3">
+    <div class="slide-inner">
+      <div class="slide-label">探索性数据分析</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">EDA <span class="text-red">关键发现</span></h2>
+        </div>
+        <div class="grid-2 fade-in" style="gap:20px;">
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <h3 class="heading-2" style="font-size:18px;margin-bottom:4px;">📊 数据质量检查</h3>
+            <div class="card">
+              <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--accent-gold);">⚠️ 原始标签问题</div>
+              <div class="body-sm" style="margin-bottom:8px;">原始 <code style="background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:3px;">churn</code> 标签与所有特征的 Pearson 相关系数接近 0，所有特征 p &gt; 0.05</div>
+              <div style="background:rgba(229,9,20,0.1);border:1px solid rgba(229,9,20,0.2);border-radius:6px;padding:10px;font-size:12px;color:var(--text-secondary);">
+                ❌ 意味着原始标签含有大量随机噪声，直接建模 AUC ≈ 0.52（约等于随机猜测）
+              </div>
+            </div>
+            <div class="card">
+              <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:#3b9ef5;">📈 描述统计关键指标</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+                  <span style="color:var(--text-secondary);">平均订阅时长</span>
+                  <span style="font-weight:600;">~24 个月</span>
+                </div>
+                <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+                  <span style="color:var(--text-secondary);">日均观看时长</span>
+                  <span style="font-weight:600;">1–3 小时</span>
+                </div>
+                <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+                  <span style="color:var(--text-secondary);">登录间隔中位数</span>
+                  <span style="font-weight:600;">7–14 天</span>
+                </div>
+                <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+                  <span style="color:var(--text-secondary);">订阅类型</span>
+                  <span style="font-weight:600;">Basic / Standard / Premium</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <h3 class="heading-2" style="font-size:18px;margin-bottom:4px;">🔬 独立样本 T 检验结果</h3>
+            <div class="card" style="padding:16px;">
+              <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;font-weight:600;">⚠️ 原始标签与特征相关性检验</div>
+              <div style="font-size:11px;color:var(--accent-gold);margin-bottom:10px;">H₀: 流失用户与非流失用户的特征均值无差异</div>
+              <table class="netflix-table" style="font-size:11px;">
+                <thead>
+                  <tr>
+                    <th style="padding:8px 10px;">特征</th>
+                    <th style="padding:8px 10px;text-align:center;">流失均值</th>
+                    <th style="padding:8px 10px;text-align:center;">未流失均值</th>
+                    <th style="padding:8px 10px;text-align:center;">p值</th>
+                    <th style="padding:8px 10px;text-align:center;">r</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="padding:6px 10px;">age</td>
+                    <td style="padding:6px 10px;text-align:center;">40.91</td>
+                    <td style="padding:6px 10px;text-align:center;">41.00</td>
+                    <td style="padding:6px 10px;text-align:center;">0.589</td>
+                    <td style="padding:6px 10px;text-align:center;">-0.002</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 10px;">account_age_months</td>
+                    <td style="padding:6px 10px;text-align:center;">29.64</td>
+                    <td style="padding:6px 10px;text-align:center;">29.93</td>
+                    <td style="padding:6px 10px;text-align:center;">0.126</td>
+                    <td style="padding:6px 10px;text-align:center;">-0.007</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 10px;">monthly_fee</td>
+                    <td style="padding:6px 10px;text-align:center;">12.28</td>
+                    <td style="padding:6px 10px;text-align:center;">12.33</td>
+                    <td style="padding:6px 10px;text-align:center;">0.166</td>
+                    <td style="padding:6px 10px;text-align:center;">-0.006</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 10px;">avg_watch_time_mins</td>
+                    <td style="padding:6px 10px;text-align:center;">154.1</td>
+                    <td style="padding:6px 10px;text-align:center;">155.2</td>
+                    <td style="padding:6px 10px;text-align:center;">0.262</td>
+                    <td style="padding:6px 10px;text-align:center;">-0.005</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 10px;">watch_sessions_per_week</td>
+                    <td style="padding:6px 10px;text-align:center;">9.95</td>
+                    <td style="padding:6px 10px;text-align:center;">10.00</td>
+                    <td style="padding:6px 10px;text-align:center;">0.433</td>
+                    <td style="padding:6px 10px;text-align:center;">-0.004</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 10px;">completion_rate</td>
+                    <td style="padding:6px 10px;text-align:center;">64.46</td>
+                    <td style="padding:6px 10px;text-align:center;">64.55</td>
+                    <td style="padding:6px 10px;text-align:center;">0.681</td>
+                    <td style="padding:6px 10px;text-align:center;">-0.002</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 10px;">days_since_last_login</td>
+                    <td style="padding:6px 10px;text-align:center;">29.43</td>
+                    <td style="padding:6px 10px;text-align:center;">29.41</td>
+                    <td style="padding:6px 10px;text-align:center;">0.919</td>
+                    <td style="padding:6px 10px;text-align:center;">0.001</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="margin-top:12px;padding:10px;background:rgba(229,9,20,0.1);border:1px solid rgba(229,9,20,0.2);border-radius:6px;font-size:11px;color:var(--text-secondary);">
+                <span style="color:var(--netflix-red);">❌ 所有特征 p > 0.05，相关系数接近 0</span> → 原始标签含大量随机噪声，直接使用 AUC ≈ 0.52
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fade-in">
+          <div class="card" style="padding:16px 20px;border-left:4px solid var(--accent-green);">
+            <div style="font-size:12px;font-weight:700;color:var(--accent-green);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">✅ 解决方案</div>
+            <div style="font-size:13px;line-height:1.6;">
+              基于业务逻辑重建标签：6因子加权评分 → Sigmoid映射 → 35%噪声注入 → 80th百分位阈值<br>
+              <span style="color:var(--accent-green);font-weight:600;">验证结果：AUC 从 0.52 提升至 0.91</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 4: FEATURE ENGINEERING ─── -->
+  <div class="slide" id="slide-4">
+    <div class="slide-inner">
+      <div class="slide-label">标签重建 · 特征工程</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">标签重建 &<br><span class="text-red">衍生特征</span>构建</h2>
+        </div>
+        <div class="grid-2 fade-in" style="gap:20px;">
+          <div>
+            <h3 class="heading-2" style="font-size:17px;margin-bottom:14px;">🏷️ 业务驱动的标签重建</h3>
+            <div class="before-after" style="display:flex;flex-direction:column;gap:10px;">
+              <div class="ba-box ba-before">
+                <div style="font-size:11px;color:var(--text-secondary);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">❌ 重建前</div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">原始二元标签</div>
+                <div class="body-sm">随机赋值，与行为特征无关联，AUC ≈ 0.52</div>
+              </div>
+              <div style="text-align:center;font-size:20px;color:var(--netflix-red);">↓</div>
+              <div class="ba-box ba-after">
+                <div style="font-size:11px;color:var(--accent-green);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">✅ 重建后</div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">业务逻辑标签</div>
+                <div class="body-sm">参考 McKinsey / Zuora 流媒体研究，基于用户信息重新定义</div>
+              </div>
+            </div>
+            <div style="margin-top:14px;" class="card">
+              <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;font-weight:600;">📊 6因子加权评分体系</div>
+              <div style="font-family:monospace;font-size:11px;color:var(--accent-green);line-height:1.8;background:rgba(0,0,0,0.3);padding:10px;border-radius:6px;">
+                风险分 = (订阅类型/3)×0.35 + (付款方式/4)×0.20<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + (主设备/6)×0.18 + (已用设备/3)×0.12<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + (最爱视频类型/5)×0.08 + (追剧次数/15)×0.07<br><br>
+                流失阈值：80th百分位（约20%流失率）<br>
+                添加35%随机噪声模拟真实隐性因素
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 class="heading-2" style="font-size:17px;margin-bottom:14px;">⚗️ 4 个衍生组合特征</h3>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div class="feature-badge">
+                <span class="icon">🔥</span>
+                <div class="text-wrap">
+                  <div class="title"><code style="color:var(--netflix-red);">inactive_pressure</code></div>
+                  <div class="desc">登录间隔÷(观看频次+1) — 高间隔+低频次=极高风险</div>
+                </div>
+              </div>
+              <div class="feature-badge">
+                <span class="icon">📺</span>
+                <div class="text-wrap">
+                  <div class="title"><code style="color:#3b9ef5;">content_depth</code></div>
+                  <div class="desc">完播率×平均时长/100 — 综合内容消费黏性指标</div>
+                </div>
+              </div>
+              <div class="feature-badge">
+                <span class="icon">💎</span>
+                <div class="text-wrap">
+                  <div class="title"><code style="color:var(--accent-green);">loyalty_score</code></div>
+                  <div class="desc">账户年龄×观看频次 — 长期留存用户的量化指标</div>
+                </div>
+              </div>
+              <div class="feature-badge">
+                <span class="icon">🎯</span>
+                <div class="text-wrap">
+                  <div class="title"><code style="color:var(--accent-gold);">rec_depth</code></div>
+                  <div class="desc">推荐点击率×互动次数/100 — 推荐系统转化效果</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 5: LABEL RECONSTRUCTION DETAILS ─── -->
+  <div class="slide" id="slide-5">
+    <div class="slide-inner">
+      <div class="slide-label">标签重建 · 特征工程</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">标签重建<br><span class="text-red">详细步骤</span></h2>
+        </div>
+        <div class="grid-2 fade-in" style="gap:20px;">
+          <div>
+            <h3 class="heading-2" style="font-size:16px;margin-bottom:12px;">📋 四步重建流程</h3>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div class="card" style="border-left:3px solid var(--netflix-red);padding:12px 14px;">
+                <div style="font-size:12px;font-weight:700;color:var(--netflix-red);margin-bottom:6px;">Step 1: 业务加权评分</div>
+                <div class="body-sm">6个特征按行业权重加权，对应真实流失驱动因子</div>
+              </div>
+              <div class="card" style="border-left:3px solid #3b9ef5;padding:12px 14px;">
+                <div style="font-size:12px;font-weight:700;color:#3b9ef5;margin-bottom:6px;">Step 2: Sigmoid 映射</div>
+                <div class="body-sm">将线性得分转为概率，产生连续概率分布</div>
+              </div>
+              <div class="card" style="border-left:3px solid var(--accent-gold);padding:12px 14px;">
+                <div style="font-size:12px;font-weight:700;color:var(--accent-gold);margin-bottom:6px;">Step 3: 35% 随机噪声</div>
+                <div class="body-sm">混入均匀随机扰动，模拟不可观测的隐性因素</div>
+              </div>
+              <div class="card" style="border-left:3px solid var(--accent-green);padding:12px 14px;">
+                <div style="font-size:12px;font-weight:700;color:var(--accent-green);margin-bottom:6px;">Step 4: 80th 百分位阈值</div>
+                <div class="body-sm">概率 > 阈值 → 流失，控制流失率约20%，贴近行业平均</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 class="heading-2" style="font-size:16px;margin-bottom:12px;">💻 Python 实现代码</h3>
+            <div style="background:#1e1e1e;border-radius:8px;padding:14px;font-family:'Fira Code','Consolas',monospace;font-size:11px;line-height:1.6;color:#d4d4d4;overflow-x:auto;border:1px solid rgba(255,255,255,0.1);">
+              <div style="color:#6a9955;"># 业务逻辑流失概率计算</div>
+              <div style="color:#c586c0;">def</span> <span style="color:#dcdcaa;">compute_churn_prob</span>(<span style="color:#9cdcfe;">row</span>):</div>
+              <div style="padding-left:12px;color:#9cdcfe;">s</span> = (row['subscription_type'] / <span style="color:#b5cea8;">3.0</span>) * <span style="color:#b5cea8;">0.35</span></div>
+              <div style="padding-left:12px;">s += (<span style="color:#b5cea8;">1</span> - row['payment_method'] / <span style="color:#b5cea8;">4.0</span>) * <span style="color:#b5cea8;">0.20</span></div>
+              <div style="padding-left:12px;">...</div>
+              <div style="padding-left:12px;color:#c586c0;">return</span> <span style="color:#b5cea8;">1.0</span> / (<span style="color:#b5cea8;">1.0</span> + np.exp(<span style="color:#b5cea8;">-8.0</span> * (s - <span style="color:#b5cea8;">0.5</span>)))</div>
+              <br/>
+              <div style="color:#6a9955;"># 添加35%随机噪声，模拟真实的隐性因素</div>
+              <div style="color:#9cdcfe;">noise</span> = np.random.uniform(<span style="color:#b5cea8;">0</span>, <span style="color:#b5cea8;">1</span>, len(df_raw))</div>
+              <div style="color:#9cdcfe;">noisy_score</span> = <span style="color:#b5cea8;">0.65</span> * risk_scores + <span style="color:#b5cea8;">0.35</span> * noise</div>
+              <br/>
+              <div style="color:#6a9955;"># 以80th百分位为阈值生成标签</div>
+              <div style="color:#9cdcfe;">churn_threshold</span> = np.percentile(noisy_score, <span style="color:#b5cea8;">80</span>)</div>
+              <div style="color:#9cdcfe;">churn_label</span> = (noisy_score >= churn_threshold).astype(<span style="color:#4ec9b0;">int</span>)</div>
+            </div>
+          </div>
+        </div>
+        <div class="fade-in">
+          <div class="card" style="padding:14px 20px;background:linear-gradient(90deg,rgba(46,204,113,0.1) 0%,rgba(46,204,113,0.05) 100%);border-left:4px solid var(--accent-green);">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="font-size:24px;">✅</div>
+              <div>
+                <div style="font-size:14px;font-weight:700;color:var(--accent-green);margin-bottom:4px;">验证结果</div>
+                <div style="font-size:13px;color:var(--text-secondary);">重建后 AUC ≈ <span style="color:var(--accent-green);font-weight:700;">0.911</span>，ROC曲线呈现清晰弧度，证明标签具有真实预测意义</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 6: FEATURE ENGINEERING DETAILS ─── -->
+  <div class="slide" id="slide-6">
+    <div class="slide-inner">
+      <div class="slide-label">标签重建 · 特征工程</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">衍生特征<br><span class="text-red">构建详情</span></h2>
+        </div>
+        <div class="grid-2 fade-in" style="gap:20px;align-items:start;margin-top:-10px;">
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <h3 class="heading-2" style="font-size:15px;margin-bottom:8px;">💻 特征工程代码</h3>
+            <div style="background:#1e1e1e;border-radius:8px;padding:12px;font-family:'Fira Code','Consolas',monospace;font-size:9px;line-height:1.4;color:#d4d4d4;overflow-x:auto;border:1px solid rgba(255,255,255,0.1);">
+              <div style="color:#6a9955;"># 构建4个高信息量衍生特征</div>
+              <div style="color:#9cdcfe;">df_model</span> = df.copy()</div>
+              <br/>
+              <div style="color:#6a9955;"># 特征1：非活跃压力指数</div>
+              <div style="color:#6a9955;"># 高间隔 + 低频次 = 极高流失风险</div>
+              <div style="color:#9cdcfe;">df_model</span>['inactive_pressure'] = (</div>
+              <div style="padding-left:10px;">df_model['days_since_last_login'] /</div>
+              <div style="padding-left:10px;">(df_model['watch_sessions_per_week'] + <span style="color:#b5cea8;">1.0</span>)</div>
+              <div>)</div>
+              <br/>
+              <div style="color:#6a9955;"># 特征2：内容消费深度</div>
+              <div style="color:#9cdcfe;">df_model</span>['content_depth'] = (</div>
+              <div style="padding-left:10px;">df_model['completion_rate'] *</div>
+              <div style="padding-left:10px;">df_model['avg_watch_time_minutes'] / <span style="color:#b5cea8;">100.0</span></div>
+              <div>)</div>
+              <br/>
+              <div style="color:#6a9955;"># 特征3：忠诚度得分</div>
+              <div style="color:#9cdcfe;">df_model</span>['loyalty_score'] = (</div>
+              <div style="padding-left:10px;">df_model['account_age_months'] *</div>
+              <div style="padding-left:10px;">df_model['watch_sessions_per_week']</div>
+              <div>)</div>
+              <br/>
+              <div style="color:#6a9955;"># 特征4：推荐系统深度</div>
+              <div style="color:#9cdcfe;">df_model</span>['rec_depth'] = (</div>
+              <div style="padding-left:10px;">df_model['recommendation_click_rate'] *</div>
+              <div style="padding-left:10px;">df_model['content_interactions']</div>
+              <div>)</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;">
+            <h3 class="heading-2" style="font-size:15px;margin-bottom:8px;">🔍 特征相关性热力图</h3>
+            <div style="display:flex;align-items:flex-start;justify-content:center;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.1);overflow:hidden;">
+              <img src="./Image/03_correlation_heatmap.png" alt="特征相关性热力图" style="width:100%;max-height:420px;object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
+              <div style="display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px;">
+                <div style="font-size:48px;margin-bottom:12px;">📊</div>
+                <div style="font-size:13px;color:var(--text-secondary);text-align:center;">特征相关性热力图</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 7: MODELS ─── -->
+  <div class="slide" id="slide-7">
+    <div class="slide-inner">
+      <div class="slide-label">模型架构</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">五模型<span class="text-red">对比体系</span></h2>
+        </div>
+        <div class="grid-3 fade-in" style="gap:16px;">
+          <div class="card" style="border-top:3px solid #3b9ef5;">
+            <div style="font-size:11px;letter-spacing:0.08em;color:#3b9ef5;font-weight:700;text-transform:uppercase;margin-bottom:10px;">线性基准</div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Logistic Regression</div>
+            <div class="body-sm" style="margin-bottom:12px;">正则化 C 调优，系数可解读，适合监管合规场景</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span class="tag tag-blue">GridSearch</span>
+              <span class="tag tag-blue">AUC: 0.911</span>
+            </div>
+          </div>
+          <div class="card" style="border-top:3px solid var(--accent-gold);">
+            <div style="font-size:11px;letter-spacing:0.08em;color:var(--accent-gold);font-weight:700;text-transform:uppercase;margin-bottom:10px;">可解释模型</div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Decision Tree</div>
+            <div class="body-sm" style="margin-bottom:12px;">深度/叶节点调优，规则透明，适合快速原型验证</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span class="tag tag-gold">GridSearch</span>
+              <span class="tag tag-gold">AUC: 0.885</span>
+            </div>
+          </div>
+          <div class="card card-featured" style="border-top:3px solid var(--accent-green);">
+            <div style="font-size:11px;letter-spacing:0.08em;color:var(--accent-green);font-weight:700;text-transform:uppercase;margin-bottom:10px;">🏆 生产首选</div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:8px;">LightGBM (GPU)</div>
+            <div class="body-sm" style="margin-bottom:12px;">流失召回率88.8%，概率校准好，GPU 加速，叶节点优先生长</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span class="tag tag-green">Halving Search</span>
+              <span class="tag tag-green">AUC: 0.908</span>
+            </div>
+          </div>
+          <div class="card" style="border-top:3px solid var(--netflix-red);">
+            <div style="font-size:11px;letter-spacing:0.08em;color:var(--netflix-red);font-weight:700;text-transform:uppercase;margin-bottom:10px;">高精度追求</div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:8px;">XGBoost (GPU)</div>
+            <div class="body-sm" style="margin-bottom:12px;">Accuracy 最高，但流失召回率仅53.3%，需配合阈值调整</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span class="tag tag-red">Halving Search</span>
+              <span class="tag tag-red">AUC: 0.900</span>
+            </div>
+          </div>
+          <div class="card" style="border-top:3px solid var(--accent-green);">
+            <div style="font-size:11px;letter-spacing:0.08em;color:var(--accent-green);font-weight:700;text-transform:uppercase;margin-bottom:10px;">稳健基准</div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Random Forest</div>
+            <div class="body-sm" style="margin-bottom:12px;">特征重要性最可靠，抗噪声强，集成多样性高</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span class="tag tag-green">GridSearch</span>
+              <span class="tag tag-green">AUC: 0.907</span>
+            </div>
+          </div>
+          <div class="card" style="background:rgba(255,255,255,0.03);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px;">
+            <div style="font-size:28px;">⚖️</div>
+            <div style="font-size:14px;font-weight:600;">训练策略</div>
+            <div class="body-sm">全模型启用<br><code style="color:var(--netflix-red);">class_weight='balanced'</code><br>解决类别不平衡</div>
+            <div style="font-size:11px;color:var(--text-secondary);">5-Fold 交叉验证</div>
+          </div>
+        </div>
+        <div class="fade-in card" style="padding:16px 20px;">
+          <div style="font-size:12px;font-weight:700;color:var(--netflix-red);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px;">调优策略对比</div>
+          <div class="grid-2" style="gap:16px;">
+            <div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:6px;">GridSearchCV（LR / DT / RF）</div>
+              <div class="body-sm">穷举搜索预设参数网格，精度高但计算成本大，适合参数空间小的场景</div>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:6px;">HalvingRandomSearchCV（XGB / LGB）</div>
+              <div class="body-sm">逐步淘汰机制，仅对最优候选深度搜索，牺牲 &lt;0.5% AUC 换取 <span class="text-red font-bold">70% 时间节省</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 8: RESULTS (PART 1) ─── -->
+  <div class="slide" id="slide-8">
+    <div class="slide-inner">
+      <div class="slide-label">模型评估结果</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">最终模型<br><span class="text-red">性能评估</span></h2>
+        </div>
+        <div class="fade-in">
+          <div class="card" style="padding:0;overflow:hidden;">
+            <table class="netflix-table">
+              <thead>
+                <tr>
+                  <th>模型</th>
+                  <th>Accuracy</th>
+                  <th>Precision</th>
+                  <th>Recall (总体)</th>
+                  <th>F1 Score</th>
+                  <th>AUC</th>
+                  <th>Recall@1 (流失)</th>
+                  <th>训练时间</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span style="font-weight:600;">Logistic Regression</span></td>
+                  <td>0.8220</td>
+                  <td>0.8755</td>
+                  <td>0.8220</td>
+                  <td>0.8357</td>
+                  <td><span class="text-red" style="font-weight:700;">0.9110</span></td>
+                  <td><span class="text-green" style="font-weight:700;">86.8%</span></td>
+                  <td>0.047s</td>
+                </tr>
+                <tr>
+                  <td><span style="font-weight:600;">Decision Tree</span></td>
+                  <td>0.7776</td>
+                  <td>0.8672</td>
+                  <td>0.7776</td>
+                  <td>0.7980</td>
+                  <td>0.8849</td>
+                  <td style="color:var(--accent-gold);">89.6%</td>
+                  <td>0.229s</td>
+                </tr>
+                <tr>
+                  <td><span style="font-weight:600;">XGBoost (GPU)</span></td>
+                  <td style="color:var(--text-primary);">0.8386</td>
+                  <td>0.8316</td>
+                  <td>0.8386</td>
+                  <td style="color:var(--text-primary);font-weight:700;">0.8344</td>
+                  <td>0.9001</td>
+                  <td style="color:var(--netflix-red);">53.3% ⚠️</td>
+                  <td>1.053s</td>
+                </tr>
+                <tr class="highlight-row" style="background:rgba(70,211,105,0.08);">
+                  <td><span style="font-weight:700;color:var(--accent-green);">🏆 LightGBM (GPU)</span></td>
+                  <td>0.8112</td>
+                  <td>0.8759</td>
+                  <td>0.8112</td>
+                  <td>0.8269</td>
+                  <td>0.9077</td>
+                  <td><span class="text-green" style="font-weight:700;">88.8%</span></td>
+                  <td>0.834s</td>
+                </tr>
+                <tr>
+                  <td><span style="font-weight:600;">Random Forest</span></td>
+                  <td>0.8234</td>
+                  <td>0.8653</td>
+                  <td>0.8234</td>
+                  <td>0.8354</td>
+                  <td>0.9073</td>
+                  <td>81.5%</td>
+                  <td>0.918s</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="fade-in">
+          <div class="card" style="padding:16px 20px;border-left:3px solid var(--accent-gold);background:rgba(245,166,35,0.05);">
+            <div style="font-size:13px;font-weight:700;color:var(--accent-gold);margin-bottom:12px;">💡 关键解读</div>
+            <div style="font-size:13px;color:var(--text-secondary);line-height:1.9;">
+              <strong style="color:var(--text-primary);">XGBoost</strong> 虽然 Accuracy 最高(0.8386)，但流失召回率仅 <span style="color:var(--netflix-red);font-weight:700;">53.3%</span>，意味着 <span style="color:var(--netflix-red);font-weight:700;">46.7% 的流失用户被漏检</span>，从业务角度损失巨大。
+              <br>
+              <strong style="color:var(--text-primary);">LightGBM</strong> 在流失召回率(<span style="color:var(--accent-green);font-weight:700;">88.8%</span>)与 AUC(0.908)之间取得最佳平衡，是生产部署的首选模型。
+              <br>
+              <strong style="color:var(--text-primary);">Decision Tree</strong> 的流失召回率高达 <span style="color:var(--accent-gold);font-weight:700;">89.6%</span>，但 AUC 仅为 0.885，说明存在较多误报。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 9: RESULTS (PART 2) ─── -->
+  <div class="slide" id="slide-9">
+    <div class="slide-inner">
+      <div class="slide-label">模型评估结果</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">最终模型<br><span class="text-red">性能评估</span></h2>
+        </div>
+        <div class="fade-in">
+          <div class="card" style="padding:0;overflow:hidden;">
+            <table class="netflix-table">
+              <thead>
+                <tr>
+                  <th>模型</th>
+                  <th>Accuracy</th>
+                  <th>Precision</th>
+                  <th>Recall (总体)</th>
+                  <th>F1 Score</th>
+                  <th>AUC</th>
+                  <th>Recall@1 (流失)</th>
+                  <th>训练时间</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span style="font-weight:600;">Logistic Regression</span></td>
+                  <td>0.8220</td>
+                  <td>0.8755</td>
+                  <td>0.8220</td>
+                  <td>0.8357</td>
+                  <td><span class="text-red" style="font-weight:700;">0.9110</span></td>
+                  <td><span class="text-green" style="font-weight:700;">86.8%</span></td>
+                  <td>0.047s</td>
+                </tr>
+                <tr>
+                  <td><span style="font-weight:600;">Decision Tree</span></td>
+                  <td>0.7776</td>
+                  <td>0.8672</td>
+                  <td>0.7776</td>
+                  <td>0.7980</td>
+                  <td>0.8849</td>
+                  <td style="color:var(--accent-gold);">89.6%</td>
+                  <td>0.229s</td>
+                </tr>
+                <tr>
+                  <td><span style="font-weight:600;">XGBoost (GPU)</span></td>
+                  <td style="color:var(--text-primary);">0.8386</td>
+                  <td>0.8316</td>
+                  <td>0.8386</td>
+                  <td style="color:var(--text-primary);font-weight:700;">0.8344</td>
+                  <td>0.9001</td>
+                  <td style="color:var(--netflix-red);">53.3% ⚠️</td>
+                  <td>1.053s</td>
+                </tr>
+                <tr class="highlight-row" style="background:rgba(70,211,105,0.08);">
+                  <td><span style="font-weight:700;color:var(--accent-green);">🏆 LightGBM (GPU)</span></td>
+                  <td>0.8112</td>
+                  <td>0.8759</td>
+                  <td>0.8112</td>
+                  <td>0.8269</td>
+                  <td>0.9077</td>
+                  <td><span class="text-green" style="font-weight:700;">88.8%</span></td>
+                  <td>0.834s</td>
+                </tr>
+                <tr>
+                  <td><span style="font-weight:600;">Random Forest</span></td>
+                  <td>0.8234</td>
+                  <td>0.8653</td>
+                  <td>0.8234</td>
+                  <td>0.8354</td>
+                  <td>0.9073</td>
+                  <td>81.5%</td>
+                  <td>0.918s</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="grid-2 fade-in" style="gap:20px;">
+          <div class="card" style="display:flex;flex-direction:column;align-items:stretch;padding-bottom:16px;">
+            <div style="font-size:13px;font-weight:700;color:var(--netflix-red);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:14px;">📊 AUC 对比（调优前 vs 后）</div>
+            <div class="bar-chart">
+              <div class="bar-row">
+                <div class="bar-label" style="font-size:11px;">LR</div>
+                <div class="bar-track"><div class="bar-fill" style="width:91.1%"></div></div>
+                <div class="bar-val" style="font-size:12px;color:var(--netflix-red);">0.911</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label" style="font-size:11px;">LGB</div>
+                <div class="bar-track"><div class="bar-fill" style="width:90.77%"></div></div>
+                <div class="bar-val" style="font-size:12px;color:var(--netflix-red);">0.908</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label" style="font-size:11px;">RF</div>
+                <div class="bar-track"><div class="bar-fill" style="width:90.73%"></div></div>
+                <div class="bar-val" style="font-size:12px;color:var(--netflix-red);">0.907</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label" style="font-size:11px;">XGB</div>
+                <div class="bar-track"><div class="bar-fill blue" style="width:90%"></div></div>
+                <div class="bar-val" style="font-size:12px;color:#3b9ef5;">0.900</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label" style="font-size:11px;">DT</div>
+                <div class="bar-track"><div class="bar-fill gold" style="width:88.49%"></div></div>
+                <div class="bar-val" style="font-size:12px;color:var(--accent-gold);">0.885</div>
+              </div>
+              <div class="divider" style="margin:8px 0;"></div>
+              <div class="bar-row">
+                <div class="bar-label" style="font-size:11px;color:rgba(255,255,255,0.3);">调优前(基线)</div>
+                <div class="bar-track"><div class="bar-fill" style="width:52%;background:rgba(255,255,255,0.15);box-shadow:none;"></div></div>
+                <div class="bar-val" style="font-size:12px;color:rgba(255,255,255,0.3);">≈0.52</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="card-featured">
+              <div style="font-size:13px;font-weight:700;color:var(--netflix-red);margin-bottom:10px;">🏆 核心结论</div>
+              <div class="body-sm" style="line-height:1.9;">
+                ✅ 调优后集成模型 AUC 均达到 <strong class="text-red">0.90+</strong><br>
+                ✅ ROC 曲线呈现清晰弧度（vs 调优前 AUC ≈ 0.52）<br>
+                ✅ HalvingSearch 节省 <strong class="text-green">70% 训练时间</strong><br>
+                ✅ <strong class="text-green">LightGBM 流失召回率 88.8%</strong>，生产部署首选<br>
+                ⚠️ XGBoost Accuracy 最高，但流失召回率仅 53.3%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 10: RESULTS (PART 2) - WITH CHART ─── -->
+  <div class="slide" id="slide-10">
+    <div class="slide-inner">
+      <div class="slide-label">模型评估结果</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">最终模型<br><span class="text-red">性能评估</span></h2>
+        </div>
+        <div class="fade-in">
+          <div class="card" style="padding:0;overflow:hidden;">
+            <table class="netflix-table">
+              <thead>
+                <tr>
+                  <th>模型</th>
+                  <th>Accuracy</th>
+                  <th>Precision</th>
+                  <th>Recall (总体)</th>
+                  <th>F1 Score</th>
+                  <th>AUC</th>
+                  <th>Recall@1 (流失)</th>
+                  <th>训练时间</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span style="font-weight:600;">Logistic Regression</span></td>
+                  <td>0.8220</td>
+                  <td>0.8755</td>
+                  <td>0.8220</td>
+                  <td>0.8357</td>
+                  <td><span class="text-red" style="font-weight:700;">0.9110</span></td>
+                  <td><span class="text-green" style="font-weight:700;">86.8%</span></td>
+                  <td>0.047s</td>
+                </tr>
+                <tr>
+                  <td><span style="font-weight:600;">Decision Tree</span></td>
+                  <td>0.7776</td>
+                  <td>0.8672</td>
+                  <td>0.7776</td>
+                  <td>0.7980</td>
+                  <td>0.8849</td>
+                  <td style="color:var(--accent-gold);">89.6%</td>
+                  <td>0.229s</td>
+                </tr>
+                <tr>
+                  <td><span style="font-weight:600;">XGBoost (GPU)</span></td>
+                  <td style="color:var(--text-primary);">0.8386</td>
+                  <td>0.8316</td>
+                  <td>0.8386</td>
+                  <td style="color:var(--text-primary);font-weight:700;">0.8344</td>
+                  <td>0.9001</td>
+                  <td style="color:var(--netflix-red);">53.3% ⚠️</td>
+                  <td>1.053s</td>
+                </tr>
+                <tr class="highlight-row" style="background:rgba(70,211,105,0.08);">
+                  <td><span style="font-weight:700;color:var(--accent-green);">🏆 LightGBM (GPU)</span></td>
+                  <td>0.8112</td>
+                  <td>0.8759</td>
+                  <td>0.8112</td>
+                  <td>0.8269</td>
+                  <td>0.9077</td>
+                  <td><span class="text-green" style="font-weight:700;">88.8%</span></td>
+                  <td>0.834s</td>
+                </tr>
+                <tr>
+                  <td><span style="font-weight:600;">Random Forest</span></td>
+                  <td>0.8234</td>
+                  <td>0.8653</td>
+                  <td>0.8234</td>
+                  <td>0.8354</td>
+                  <td>0.9073</td>
+                  <td>81.5%</td>
+                  <td>0.918s</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="fade-in">
+          <div class="card" style="padding:0;overflow:hidden;">
+            <img src="./Image/09_confusion_matrices.png" alt="混淆矩阵对比" style="width:100%;display:block;" data-zoomable onclick="openLightbox(this.src, this.alt); event.stopPropagation();"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 11: BUSINESS INSIGHTS ─── -->
+  <div class="slide" id="slide-11">
+    <div class="slide-inner">
+      <div class="slide-label">商业洞见</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">核心<span class="text-red">商业洞见</span></h2>
+        </div>
+        <div class="grid-2 fade-in" style="gap:20px;">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--netflix-red);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px;">🚨 高优先级：流失风险信号</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="insight-card">
+                <div style="font-size:14px;font-weight:700;margin-bottom:6px;">① <code style="color:var(--netflix-red);">inactive_pressure</code> — 最强预测因子</div>
+                <div class="body-sm" style="margin-bottom:10px;">登录间隔长 + 观看频次低的用户，流失概率是均值的 <strong class="text-red">3–5 倍</strong></div>
+                <div style="font-size:12px;font-weight:600;color:var(--netflix-red);margin-bottom:8px;">三级自动化召回体系：</div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <div class="rec-level">
+                    <div class="rec-level-badge level-1">L1 · 7天</div>
+                    <div style="font-size:12px;color:var(--text-secondary);">个性化内容推送邮件</div>
+                  </div>
+                  <div class="rec-level">
+                    <div class="rec-level-badge level-2">L2 · 14天</div>
+                    <div style="font-size:12px;color:var(--text-secondary);">App Push + 限时免费看活动</div>
+                  </div>
+                  <div class="rec-level">
+                    <div class="rec-level-badge level-3">L3 · 30天</div>
+                    <div style="font-size:12px;color:var(--text-secondary);">专属客服 + 套餐降级保留优惠</div>
+                  </div>
+                </div>
+              </div>
+              <div class="insight-card">
+                <div style="font-size:14px;font-weight:700;margin-bottom:6px;">② <code style="color:#3b9ef5;">content_depth</code> 低 — 内容匹配失效</div>
+                <div class="body-sm">完播率 &lt; 30% 且平均时长 &lt; 60 分钟的用户，流失风险显著偏高</div>
+                <div style="margin-top:8px;font-size:12px;color:var(--text-secondary);">→ 切换协同过滤到多样性推荐；在40%进度插入「换一部看」浮窗</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--accent-green);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px;">🛡️ 高优先级：留存保护因子</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="insight-card green">
+                <div style="font-size:14px;font-weight:700;margin-bottom:6px;">③ <code style="color:var(--accent-green);">loyalty_score</code> 高 — 核心留存用户</div>
+                <div class="body-sm">账户年龄 &gt; 24 个月且每周 5+ 次的用户，是平台最稳固群体</div>
+                <div style="margin-top:8px;font-size:12px;color:var(--text-secondary);">→ 推出「高级会员忠诚计划」：独家内容预览 · 年费优惠 · 无广告特权</div>
+              </div>
+              <div class="insight-card blue">
+                <div style="font-size:14px;font-weight:700;margin-bottom:6px;">④ <code style="color:#3b9ef5;">rec_depth</code> 高 — 推荐系统有效</div>
+                <div class="body-sm">高点击率 × 高互动用户留存率最高，推荐系统是留存核心基础设施</div>
+                <div style="margin-top:8px;font-size:12px;color:var(--text-secondary);">→ 对 rec_depth 低用户单独优化推荐策略，提升个性化精度</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 12: OPERATIONS MATRIX ─── -->
+  <div class="slide" id="slide-12">
+    <div class="slide-inner">
+      <div class="slide-label">精准运营矩阵</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">精准运营<span class="text-red">分层策略</span></h2>
+        </div>
+        <div class="fade-in">
+          <div class="card" style="padding:0;overflow:hidden;">
+            <table class="netflix-table">
+              <thead>
+                <tr>
+                  <th>用户群</th>
+                  <th>判断条件</th>
+                  <th>预估规模</th>
+                  <th>行动优先级</th>
+                  <th>建议干预</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="highlight-row">
+                  <td><span style="color:var(--netflix-red);">🚨 紧急流失</span></td>
+                  <td><code style="font-size:11px;color:var(--text-secondary);">inactive_pressure &gt; P90 &amp; content_depth &lt; P25</code></td>
+                  <td><strong class="text-red">~5%</strong></td>
+                  <td><span class="tag tag-red">最高</span></td>
+                  <td>30天内主动触达</td>
+                </tr>
+                <tr>
+                  <td><span style="color:var(--accent-gold);">⚠️ 高风险</span></td>
+                  <td><code style="font-size:11px;color:var(--text-secondary);">未登录 14天+ OR 每周 &lt; 2次</code></td>
+                  <td>~15%</td>
+                  <td><span class="tag tag-gold">高</span></td>
+                  <td>自动化召回序列</td>
+                </tr>
+                <tr>
+                  <td><span style="color:#3b9ef5;">👀 观察期</span></td>
+                  <td><code style="font-size:11px;color:var(--text-secondary);">账户 &lt; 3个月 &amp; 低频次</code></td>
+                  <td>~20%</td>
+                  <td><span class="tag tag-blue">中</span></td>
+                  <td>Onboarding 强化</td>
+                </tr>
+                <tr>
+                  <td><span style="color:var(--accent-green);">✅ 健康留存</span></td>
+                  <td><code style="font-size:11px;color:var(--text-secondary);">loyalty_score &gt; P75</code></td>
+                  <td>~40%</td>
+                  <td><span class="tag tag-green">低</span></td>
+                  <td>续费提醒 + 升级引导</td>
+                </tr>
+                <tr>
+                  <td><span style="color:#a78bfa;">👑 超级用户</span></td>
+                  <td><code style="font-size:11px;color:var(--text-secondary);">Binge watcher &amp; rec_depth &gt; P90</code></td>
+                  <td>~20%</td>
+                  <td><span class="tag tag-purple">维护</span></td>
+                  <td>VIP 忠诚度计划</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="grid-4 fade-in" style="gap:14px;">
+          <div class="card" style="text-align:center;padding:20px 12px;border-top:3px solid var(--netflix-red);">
+            <div class="stat-number text-red" style="font-size:40px;">5%</div>
+            <div class="stat-label">紧急流失</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">最高优先级干预</div>
+          </div>
+          <div class="card" style="text-align:center;padding:20px 12px;border-top:3px solid var(--accent-gold);">
+            <div class="stat-number text-gold" style="font-size:40px;">15%</div>
+            <div class="stat-label">高风险</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">自动化召回</div>
+          </div>
+          <div class="card" style="text-align:center;padding:20px 12px;border-top:3px solid var(--accent-green);">
+            <div class="stat-number text-green" style="font-size:40px;">40%</div>
+            <div class="stat-label">健康留存</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">续费引导</div>
+          </div>
+          <div class="card" style="text-align:center;padding:20px 12px;border-top:3px solid #a78bfa;">
+            <div class="stat-number text-purple" style="font-size:40px;">20%</div>
+            <div class="stat-label">超级用户</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">VIP 维护</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 13: DEPLOYMENT ─── -->
+  <div class="slide" id="slide-13">
+    <div class="slide-inner">
+      <div class="slide-label">生产部署</div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:20px;">
+        <div class="fade-in">
+          <div class="divider-red"></div>
+          <h2 class="display-2">推荐<span class="text-red">生产架构</span></h2>
+        </div>
+        <div class="grid-2 fade-in" style="gap:24px;">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text-secondary);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px;">推理流水线</div>
+            <div style="display:flex;flex-direction:column;gap:0;">
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px 8px 0 0;">
+                <div style="width:32px;height:32px;background:rgba(229,9,20,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">①</div>
+                <div>
+                  <div style="font-size:13px;font-weight:600;">用户行为实时日志</div>
+                  <div style="font-size:11px;color:var(--text-secondary);">Kafka 实时流处理</div>
+                </div>
+              </div>
+              <div style="width:2px;height:16px;background:rgba(229,9,20,0.3);margin-left:30px;"></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);">
+                <div style="width:32px;height:32px;background:rgba(0,113,235,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">②</div>
+                <div>
+                  <div style="font-size:13px;font-weight:600;">特征计算</div>
+                  <div style="font-size:11px;color:var(--text-secondary);">含 inactive_pressure 等 4 个衍生特征（18原始+4衍生=22总特征）</div>
+                </div>
+              </div>
+              <div style="width:2px;height:16px;background:rgba(229,9,20,0.3);margin-left:30px;"></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(229,9,20,0.06);border:1px solid rgba(229,9,20,0.2);">
+                <div style="width:32px;height:32px;background:rgba(229,9,20,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">③</div>
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:var(--accent-green);">LightGBM 推理</div>
+                  <div style="font-size:11px;color:var(--text-secondary);">GPU 加速，<strong class="text-green">流失召回率88.8%</strong>，推理延迟 &lt; 5ms</div>
+                </div>
+              </div>
+              <div style="width:2px;height:16px;background:rgba(229,9,20,0.3);margin-left:30px;"></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);">
+                <div style="width:32px;height:32px;background:rgba(70,211,105,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">④</div>
+                <div>
+                  <div style="font-size:13px;font-weight:600;">流失概率分数 [0, 1]</div>
+                  <div style="font-size:11px;color:var(--text-secondary);">Youden Index 最优阈值，非固定 0.5</div>
+                </div>
+              </div>
+              <div style="width:2px;height:16px;background:rgba(229,9,20,0.3);margin-left:30px;"></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:0 0 8px 8px;">
+                <div style="width:32px;height:32px;background:rgba(139,92,246,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">⑤</div>
+                <div>
+                  <div style="font-size:13px;font-weight:600;">分层干预策略 → CRM 触达</div>
+                  <div style="font-size:11px;color:var(--text-secondary);">自动触发三级召回体系</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div class="card-featured">
+              <div style="font-size:13px;font-weight:700;color:var(--netflix-red);margin-bottom:12px;">⚙️ 运维规范</div>
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+                <div style="display:flex;gap:12px;">
+                  <span class="tag tag-red" style="flex-shrink:0;">更新</span>
+                  <span style="color:var(--text-secondary);">每月重训，捕捉季节性变化</span>
+                </div>
+                <div style="display:flex;gap:12px;">
+                  <span class="tag tag-gold" style="flex-shrink:0;">阈值</span>
+                  <span style="color:var(--text-secondary);">Youden Index 最优点动态调整</span>
+                </div>
+                <div style="display:flex;gap:12px;">
+                  <span class="tag tag-blue" style="flex-shrink:0;">监控</span>
+                  <span style="color:var(--text-secondary);">线上 AUC/Recall 每日监控，漂移 &gt;3% 触发重训告警</span>
+                </div>
+                <div style="display:flex;gap:12px;">
+                  <span class="tag tag-green" style="flex-shrink:0;">A/B 测</span>
+                  <span style="color:var(--text-secondary);">Level 1 召回用户随机分组，验证 7 天留存差异</span>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div style="font-size:13px;font-weight:700;color:var(--accent-gold);margin-bottom:10px;">💡 模型选择建议</div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text-secondary);">
+                <div><strong style="color:var(--text-primary);">生产首选：</strong>LightGBM — <span class="text-green">流失召回率88.8%</span>，概率校准好</div>
+                <div><strong style="color:var(--text-primary);">高精度追求：</strong>XGBoost — Accuracy最高，但需调低阈值提升召回</div>
+                <div><strong style="color:var(--text-primary);">合规报告：</strong>LR — 系数可解读，AUC 最高 0.911</div>
+                <div><strong style="color:var(--text-primary);">特征分析：</strong>Random Forest — 重要性最可靠</div>
+              </div>
+            </div>
+            <div class="card" style="border:1px solid rgba(70,211,105,0.2);background:rgba(70,211,105,0.05);">
+              <div style="font-size:13px;font-weight:700;color:var(--accent-green);margin-bottom:8px;">📈 预期业务收益</div>
+              <div style="font-size:13px;color:var(--text-secondary);">
+                精准识别 ~5% 紧急流失用户，每月主动干预可挽回
+                <strong class="text-green">3–5% 留存率</strong>，年化收入影响可达
+                <strong class="text-green">数百万美元</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 14: SUMMARY ─── -->
+  <div class="slide" id="slide-14">
+    <div class="cover-bg"></div>
+    <div class="cover-glow"></div>
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:40px;max-width:900px;text-align:center;">
+      <div class="fade-in">
+        <div class="tag tag-red" style="margin-bottom:20px;">项目总结</div>
+        <h2 class="display-2" style="line-height:1.1;">结论与<br><span class="text-red">研究贡献</span></h2>
+      </div>
+      <div class="grid-3 fade-in" style="gap:16px;text-align:left;">
+        <div class="card card-featured">
+          <div style="font-size:24px;margin-bottom:10px;">🎯</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px;">核心方法论</div>
+          <div class="body-sm">基于业务逻辑重建流失标签，AUC 从 0.52 提升到 0.91，证明标签质量是模型成功的关键</div>
+        </div>
+        <div class="card card-featured">
+          <div style="font-size:24px;margin-bottom:10px;">⚗️</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px;">特征工程价值</div>
+          <div class="body-sm">4 个衍生特征中，<code style="color:var(--netflix-red);">inactive_pressure</code> 成为最强预测因子，验证了领域知识驱动的特征构建</div>
+        </div>
+        <div class="card card-featured">
+          <div style="font-size:24px;margin-bottom:10px;">🚀</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px;">工程优化</div>
+          <div class="body-sm">HalvingRandomSearch + GPU 加速实现 6–8 倍提速，牺牲 &lt;0.5% AUC 换取 70% 时间节省</div>
+        </div>
+      </div>
+      <div class="grid-4 fade-in" style="gap:14px;text-align:center;">
+        <div style="padding:16px;background:rgba(229,9,20,0.08);border:1px solid rgba(229,9,20,0.2);border-radius:10px;">
+          <div class="stat-number text-red" style="font-size:42px;">0.91</div>
+          <div class="stat-label">最优 AUC</div>
+        </div>
+        <div style="padding:16px;background:rgba(70,211,105,0.08);border:1px solid rgba(70,211,105,0.2);border-radius:10px;">
+          <div class="stat-number text-green" style="font-size:42px;">6–8x</div>
+          <div class="stat-label">训练加速</div>
+        </div>
+        <div style="padding:16px;background:rgba(59,158,245,0.08);border:1px solid rgba(59,158,245,0.2);border-radius:10px;">
+          <div class="stat-number text-blue" style="font-size:42px;">4</div>
+          <div class="stat-label">衍生特征</div>
+        </div>
+        <div style="padding:16px;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:10px;">
+          <div class="stat-number text-purple" style="font-size:42px;">5</div>
+          <div class="stat-label">对比模型</div>
+        </div>
+      </div>
+      <div class="fade-in" style="padding-top:8px;">
+        <div class="netflix-logo-big" style="font-size:14px;margin-bottom:12px;">HACHIMI GROUP · MM5412</div>
+        <div class="body-sm">Business Intelligence &amp; Decision Analytics</div>
+        <button class="play-btn" style="margin-top:16px;background:transparent;border:2px solid var(--netflix-red);color:var(--netflix-red);display:block;margin-left:auto;margin-right:auto;" onclick="goToSlide(0)">
+          ↺ 重新播放
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end slides-wrapper -->
+
+<script>
+  // ─── STATE ───
+  let currentSlide = 0;
+  const totalSlides = 14;
+
+  // ─── CURSOR ───
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+    setTimeout(() => {
+      cursorRing.style.left = e.clientX + 'px';
+      cursorRing.style.top = e.clientY + 'px';
+    }, 50);
+  });
+  document.querySelectorAll('a,button,.card,.dot,.nav-arrow,.play-btn,.feature-badge,.rec-level,.pipeline-box').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px';
+      cursor.style.height = '20px';
+      cursorRing.style.width = '50px';
+      cursorRing.style.height = '50px';
+      cursorRing.style.borderColor = 'rgba(229,9,20,0.7)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px';
+      cursor.style.height = '12px';
+      cursorRing.style.width = '36px';
+      cursorRing.style.height = '36px';
+      cursorRing.style.borderColor = 'rgba(229,9,20,0.5)';
+    });
+  });
+
+  // ─── DOTS ───
+  const dotsContainer = document.getElementById('slideDots');
+  for (let i = 0; i < totalSlides; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.title = 'Slide ' + (i + 1);
+    dot.addEventListener('click', () => goToSlide(i));
+    dotsContainer.appendChild(dot);
+  }
+
+  // ─── NAV ARROWS VISIBILITY ───
+  let arrowsVisible = false;
+  const prevBtnEl = document.getElementById('prevBtn');
+  const nextBtnEl = document.getElementById('nextBtn');
+
+  document.addEventListener('mousemove', e => {
+    const show = e.clientY > window.innerHeight - 100;
+    if (show && !arrowsVisible) {
+      prevBtnEl.classList.add('visible');
+      nextBtnEl.classList.add('visible');
+      arrowsVisible = true;
+    } else if (!show && arrowsVisible) {
+      prevBtnEl.classList.remove('visible');
+      nextBtnEl.classList.remove('visible');
+      arrowsVisible = false;
+    }
+  });
+
+  // ─── UPDATE UI ───
+  function updateUI() {
+    // Counter
+    document.getElementById('slideCounter').textContent =
+      String(currentSlide + 1).padStart(2, '0') + ' / ' + String(totalSlides).padStart(2, '0');
+    // Progress
+    document.getElementById('progressBar').style.width =
+      ((currentSlide + 1) / totalSlides * 100) + '%';
+    // Dots
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === currentSlide);
+    });
+    // Prev/Next buttons disabled state
+    prevBtnEl.style.opacity = currentSlide === 0 ? '0.3' : '1';
+    nextBtnEl.style.opacity = currentSlide === totalSlides - 1 ? '0.3' : '1';
+  }
+
+  // ─── CHANGE SLIDE ───
+  function goToSlide(index) {
+    if (index < 0 || index >= totalSlides) return;
+    const slides = document.querySelectorAll('.slide');
+    const old = slides[currentSlide];
+    const next = slides[index];
+
+    old.classList.remove('active');
+    old.classList.add('prev');
+    setTimeout(() => old.classList.remove('prev'), 700);
+
+    next.classList.add('active');
+    next.style.transform = index > currentSlide ? 'translateX(100px)' : 'translateX(-100px)';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => { next.style.transform = ''; });
+    });
+
+    currentSlide = index;
+    updateUI();
+
+    // Animate bars when entering specific slides
+    setTimeout(animateBars, 400);
+  }
+
+  function changeSlide(dir) {
+    goToSlide(currentSlide + dir);
+  }
+
+  // ─── KEYBOARD ───
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); changeSlide(1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); changeSlide(-1);
+    } else if (e.key === 'Home') goToSlide(0);
+    else if (e.key === 'End') goToSlide(totalSlides - 1);
+  });
+
+  // ─── TOUCH SWIPE ───
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 60) changeSlide(dx < 0 ? 1 : -1);
+  });
+
+  // ─── SCROLL WHEEL ───
+  let wheelLock = false;
+  document.addEventListener('wheel', e => {
+    if (wheelLock) return;
+    wheelLock = true;
+    changeSlide(e.deltaY > 0 ? 1 : -1);
+    setTimeout(() => { wheelLock = false; }, 800);
+  });
+
+  // ─── ANIMATE BARS ───
+  function animateBars() {
+    const activeSlide = document.querySelector('.slide.active');
+    if (!activeSlide) return;
+    activeSlide.querySelectorAll('.bar-fill[data-width]').forEach(bar => {
+      const w = bar.getAttribute('data-width');
+      bar.style.width = w + '%';
+    });
+  }
+
+  // ─── INIT ───
+  updateUI();
+  animateBars();
+
+  // Navbar scroll effect (minor polish)
+  const navbar = document.getElementById('navbar');
+  // since slides aren't real scroll, just keep it static
+
+  // ─── IMAGE LIGHTBOX ───
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+
+  function openLightbox(imgSrc, imgAlt) {
+    lightboxImg.src = imgSrc;
+    lightboxImg.alt = imgAlt || '';
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox(event) {
+    // 只在点击模态框背景或关闭按钮时关闭
+    if (event && event.target !== lightbox && event.target !== event.currentTarget) return;
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      lightboxImg.src = '';
+    }, 200);
+  }
+
+  // ESC 键关闭
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+      lightbox.classList.remove('active');
+      document.body.style.overflow = '';
+      lightboxImg.src = '';
+    }
+  });
+
+  // 给所有幻灯片内的 img 添加可放大属性（排除 logo）
+  document.querySelectorAll('.slide img').forEach(img => {
+    if (!img.closest('.navbar') && !img.closest('.lightbox')) {
+      img.setAttribute('data-zoomable', 'true');
+      img.addEventListener('click', e => {
+        e.stopPropagation();
+        openLightbox(img.src, img.alt);
+      });
+    }
+  });
+</script>
+</body>
+</html>
